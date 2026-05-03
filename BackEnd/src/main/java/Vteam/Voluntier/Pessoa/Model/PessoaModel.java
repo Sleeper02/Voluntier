@@ -2,8 +2,7 @@ package Vteam.Voluntier.Pessoa.Model;
 
 import Vteam.Voluntier.Pessoa.TierConta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -45,6 +42,7 @@ public class PessoaModel {
 
     @NotBlank (message = "Email de usuario não pode ser vazio")
     @Indexed(unique = true)
+    @Email(message = "O formato do email é inválido")
     private String email_pessoa;
 
     @NotBlank(message = "A senha não pode ser vazia")
