@@ -1,5 +1,6 @@
 package Vteam.Voluntier.Pessoa.Controller;
 
+import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
 import jakarta.validation.Valid;
@@ -20,6 +21,17 @@ public class PessoaController {
     @GetMapping("/teste")
     public String testeAPI(){
         return "Tá funcionando a rota";
+    }
+
+    @PostMapping("/Cadastro")
+    public ResponseEntity<String> Cadastro(@Valid @RequestBody CadastroDTO cadastroDTO){
+        boolean cadastro = pessoaService.cadastroCliente(cadastroDTO);
+
+        if(cadastro){
+            return ResponseEntity.status(HttpStatus.CREATED).body("Cadastro realizado com sucesso!");
+        }else{
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email ou CPF já cadastrado!");
+        }
     }
 
     @PostMapping("/Login")
