@@ -1,0 +1,13 @@
+#crie um file com .env e adicione isso aq para rodar localmente no docker
+#e coloque os seus valores, isso já tá programado pra subir no docker-compose
+
+MONGO_ROOT_USERNAME=
+MONGO_ROOT_PASSWORD=
+MONGO_DATABASE=
+ME_BASICAUTH_USERNAME=
+ME_BASICAUTH_PASSWORD=
+
+#após isso vai no terminal docker-compose up -d
+#se quiser excluir docker-compose down -v
+#pra vc mexer no banco pelo navegador use http://localhost:8081
+#e para acessar a API http://localhost:8080 no postman ou qualquer outro q vc use
