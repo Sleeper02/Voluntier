@@ -38,7 +38,7 @@ public class PessoaModel {
     @NotBlank (message = "CPF de usuario não pode ser vazio")
     @CPF(message = "O CPF digitado é inválido") // O Spring já tem um validador pronto
     @Indexed(unique = true)
-    private String CPF;
+    private String CPF; //CPF tá em maiusculo então no json tbm tem q estár n esquece
 
     @NotBlank (message = "Email de usuario não pode ser vazio")
     @Indexed(unique = true)
