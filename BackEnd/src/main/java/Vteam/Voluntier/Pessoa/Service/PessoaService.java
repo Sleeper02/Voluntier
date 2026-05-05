@@ -9,7 +9,11 @@ import java.util.Optional;
 
 @Service
 public class PessoaService {
-    private PessoaRepository pessoaRepository;
+    private final PessoaRepository pessoaRepository;
+
+    public PessoaService(PessoaRepository pessoaRepository) {
+        this.pessoaRepository = pessoaRepository;
+    }
 
     public boolean validarLogin(LoginDTO loginDTO){ //Está mockado por enquanto
         String email = loginDTO.getEmail();
@@ -24,7 +28,7 @@ public class PessoaService {
 
         PessoaModel user = emailEncontrado.get();
 
-        if(senha.equals(user.getSenha_pessoa())){
+        if(senha.equals(user.getSenha())){
             return true;
         }else {
             return false;
