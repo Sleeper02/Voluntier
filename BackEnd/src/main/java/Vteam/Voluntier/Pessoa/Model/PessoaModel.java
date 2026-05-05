@@ -23,34 +23,34 @@ import java.time.LocalDate;
 public class PessoaModel {
 
     @Id
-    private String ID_pessoa;
+    private String ID;
 
     @NotBlank (message = "Nome de usuario não pode ser vazio")
     @Field("nome")
-    private String nome_pessoa;
+    private String nome;
 
     @NotNull(message = "Data de nascimento do usuario não pode ser vazio")
-    private LocalDate dataNascimento_pessoa; //(ano, mes, dia)
+    private LocalDate dataNascimento; //(ano, mes, dia)
 
     @Pattern(regexp = "^\\d{10,11}$", message = "O telefone deve conter apenas números e ter entre 10 e 11 dígitos (com DDD)")
-    private String telefone_pessoa;
+    private String telefone;
 
     @NotBlank (message = "CPF de usuario não pode ser vazio")
     @CPF(message = "O CPF digitado é inválido") // O Spring já tem um validador pronto
     @Indexed(unique = true)
-    private String CPF_pessoa;
+    private String CPF;
 
     @NotBlank (message = "Email de usuario não pode ser vazio")
     @Indexed(unique = true)
     @Email(message = "O formato do email é inválido")
-    private String email_pessoa;
+    private String email;
 
     @NotBlank(message = "A senha não pode ser vazia")
     @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres")
     @JsonIgnore
-    private String senha_pessoa;
+    private String senha;
 
-    private TierConta tier_pessoa; //mock
+    private TierConta tier; //mock
 
-    private Object evento_pessoa; //mock
+    private Object evento; //mock
 }

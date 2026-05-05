@@ -50,7 +50,7 @@ public class PessoaService {
 
         PessoaModel user = emailEncontrado.get();
 
-        if(senha.equals(user.getSenha_pessoa())){
+        if(senha.equals(user.getSenha())){
             return true;
         }else {
             return false;
