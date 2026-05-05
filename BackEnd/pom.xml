@@ -51,7 +51,6 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>3.0.2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -88,28 +87,7 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.3.4.Final</version>
 		</dependency>
-	<dependency>
-		<groupId>io.mongock</groupId>
-		<artifactId>mongock-springboot</artifactId>
-	</dependency>
-		<dependency>
-		<groupId>io.mongock</groupId>
-		<artifactId>mongodb-springdata-v4-driver</artifactId>
-	</dependency>
 	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.mongock</groupId>
-				<artifactId>mongock-bom</artifactId>
-				<version>5.3.6</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<build>
 		<plugins>
 			<plugin>
