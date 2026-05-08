@@ -17,7 +17,7 @@ function Login () {
 
                 {/*div do lado esquerdo (imagem e textos)*/}
                 <div 
-                    className="w-[380px] h-full rounded-[30px] bg-cover bg-center bg-no-repeat p-8 flex flex-col justify-vetween text-white"
+                    className="w-[380px] h-full rounded-[30px] bg-cover bg-center bg-no-repeat p-8 flex flex-col justify-between text-white"
                     style={{
                         backgroundImage: `url(${paint})`
                     }}
@@ -102,7 +102,7 @@ function Login () {
 
                             <p className="mt-4 text-center text-xs">
                                 Não tem uma conta?{" "}
-                                <Link to="/cadastro" className="font-semibold">
+                                <Link to="/cadastro" className="font-semibold transition-all duration-300 hover:opacity-70 hover:translate-x-1">
                                 Cadastre-se
                                 </Link>
                             </p>
