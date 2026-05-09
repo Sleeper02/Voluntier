@@ -4,6 +4,7 @@ import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
+import Vteam.Voluntier.Pessoa.TierConta;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class PessoaService {
             dto.getCPF(),
             dto.getEmail(),
             dto.getSenha(),
-            null,
+            TierConta.NENHUM,
             null
         );
 
