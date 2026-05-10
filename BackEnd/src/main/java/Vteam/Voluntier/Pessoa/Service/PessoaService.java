@@ -4,7 +4,7 @@ import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
-import Vteam.Voluntier.Pessoa.TierConta;
+import Vteam.Voluntier.Pessoa.Model.TierConta;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

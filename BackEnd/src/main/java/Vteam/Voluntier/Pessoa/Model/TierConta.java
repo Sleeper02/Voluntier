@@ -1,4 +1,4 @@
-package Vteam.Voluntier.Pessoa;
+package Vteam.Voluntier.Pessoa.Model;
 
 public enum TierConta {
     NENHUM,

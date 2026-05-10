@@ -12,19 +12,19 @@ import java.time.LocalDate;
 public class EventoModel {
 
     @Id
-    private Long id;
+    private String id;
 
     @NotBlank
     @Field("nome")
     private String nome;
 
-    @NotBlank
+    @NotNull
     @Field("DataEvento")
     private LocalDate dataHora;
 
     @NotBlank
     @Field("IdInsituição")
-    private Long idInstituicao;
+    private String idInstituicao; //Verificar no service se existe
 
     @NotNull
     @Field("Lotação")
@@ -39,6 +39,9 @@ public class EventoModel {
 
     @Field("Solicitação")
     private boolean solicitacao;
+
+    @Field("Tier")
+    private TierEvento tier;
 
     @Field("Fotos")
     private String fotos; //Colocar URL da foto
