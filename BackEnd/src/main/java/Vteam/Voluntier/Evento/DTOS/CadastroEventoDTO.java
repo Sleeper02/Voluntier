@@ -1,4 +1,4 @@
-package Vteam.Voluntier.Evento.Model;
+package Vteam.Voluntier.Evento.DTOS;
 
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
@@ -18,11 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 
-@Document(collection = "eventos")
-public class EventoModel {
-
-    @Id
-    private String id;
+public class CadastroEventoDTO {
 
     @NotBlank
     @Field("nome Evento")
@@ -39,10 +33,6 @@ public class EventoModel {
     @NotNull
     @Field("Lotação")
     private int lotacao;
-
-    @NotNull
-    @Field("Inscritos")
-    private int inscritos;
 
     @Field("Descrição Evento")
     private String descricao;
