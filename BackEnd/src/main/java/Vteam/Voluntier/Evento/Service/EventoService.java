@@ -16,6 +16,10 @@ public class EventoService {
     }
 
     public Boolean criarEvento(CadastroEventoDTO cadastroEvento){
+
+//            if (!instituicaoRepository.existsById(cadastroEvento.getIdInstituicao())) { adicionar ao criar classe Instituição
+//                throw new RuntimeException("Instituição não encontrada");
+//            }
         try {
             EventoModel evento = mapper.map(cadastroEvento, EventoModel.class);
             evento.setInscritos(0);
