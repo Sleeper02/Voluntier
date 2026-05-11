@@ -4,7 +4,9 @@ import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
 import Vteam.Voluntier.Evento.Model.EventoModel;
 import Vteam.Voluntier.Evento.Repository.EventoRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EventoService {
 
     private final EventoRepository repository;
