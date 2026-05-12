@@ -1,5 +1,6 @@
 import LinhaSuperior from "../../components/linhasuperior";
 import Footer from "../../components/footer";
+import UploadFotos from "../../components/uploadfotos";
 import { Link } from "react-router-dom";
 
 function CadastrarEvento () {
@@ -20,8 +21,8 @@ function CadastrarEvento () {
                     </h1>
 
                     <p className="text-[#6B6B6B] text-[22px] px-8 leading-tight">
-                    Você está prestes a criar um evento que faz a diferença — 
-                    cadastre agora e gere impacto social e ambiental, conectando 
+                    Você está prestes a criar um evento que faz a diferença. 
+                    Cadastre agora e gere impacto social e ambiental, conectando 
                     pessoas e inspirando mudanças positivas.
                     </p>
 
@@ -30,7 +31,7 @@ function CadastrarEvento () {
                 {/* Formulário de cadastro de evento */}
                 <form className="mt-6 space-y-5 px-8 pb-10"> 
 
-                    <div>
+                    {/*<div>
                         <label className="block text-[16px] font-semibold text-black">
                         <span className="text-[#C96A3D]">*</span> Nome Fantasia
                         </label>
@@ -80,18 +81,18 @@ function CadastrarEvento () {
                                 <option>Saúde</option>
                                 <option>Cultura</option>
                             </select>
-                    </div>
+                    </div> */}
 
                     <div>
                         <label className="block text-[16px] font-semibold text-black">
-                        <span className="text-[#C96A3D]">*</span> Título
+                        <span className="text-[#C96A3D]">*</span> Nome do Evento
                         </label>
                         <input
                             type="text"
                             className="mt-2 w-full rounded-md bg-[#E8E1E1] px-4 py-3 outline-none"
                         />
                         <p className="mt-1 text-[12px] text-[#6B6B6B]">
-                        (Título do evento. Ex: Parque Feliz)
+                        (Nome do evento. Ex: Parque Feliz)
                         </p>
                     </div>
 
@@ -119,6 +120,28 @@ function CadastrarEvento () {
                     </div>
 
                     <div>
+                        <label className="block text-[16px] font-semibold text-black">
+                            <span className="text-[#C96A3D]">*</span> Data do evento
+                        </label>
+
+                        <input
+                            type="date"
+                            className="mt-2 w-full rounded-md bg-[#E8E1E1] px-4 py-3 outline-none"
+                        />
+                        </div>
+
+                        <div>
+                        <label className="block text-[16px] font-semibold text-black">
+                            <span className="text-[#C96A3D]">*</span> Horário do evento
+                        </label>
+
+                        <input
+                            type="time"
+                            className="mt-2 w-full rounded-md bg-[#E8E1E1] px-4 py-3 outline-none"
+                        />
+                        </div>
+
+                    {/*<div>
                         <label className="block text-[16px] font-semibold text-black">
                         Website
                         </label>
@@ -179,12 +202,12 @@ function CadastrarEvento () {
                         <p className="mt-1 text-[12px] text-[#6B6B6B]">
                         (observações que você considera importante para o evento)
                         </p>
-                    </div>
+                    </div>*/}
 
                 </form>
 
                 {/* Informações sobre o responsável pelo evento */}
-                <div>
+                {/*<div>
 
                     <h1 className="text-[#2D2D2D] text-[32px] font-bold px-8 mt-3">
                     Responsável
@@ -192,7 +215,7 @@ function CadastrarEvento () {
 
                 </div>
 
-                {/* Formulário de informações do responsável pelo evento */}
+                {/* Formulário de informações do responsável pelo evento 
                 <form className="mt-6 space-y-5 px-8 pb-10">
                     <div>
                         <label className="block text-[16px] font-semibold text-black">
@@ -330,6 +353,12 @@ function CadastrarEvento () {
                         </p>
                     </div>
 
+                </form>*/}
+
+                <form className="mt-6 space-y-5 px-8 pb-10">
+
+                    <UploadFotos />
+                
                 </form>
 
                 <div className="mt-4 px-8">
