@@ -3,7 +3,9 @@ package Vteam.Voluntier.Pessoa.Service;
 import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
+import Vteam.Voluntier.Pessoa.Model.TierConta;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,9 +13,11 @@ import java.util.Optional;
 @Service
 public class PessoaService {
     private final PessoaRepository pessoaRepository;
+    private final ModelMapper mapper;
 
-    public PessoaService(PessoaRepository pessoaRepository) {
+    public PessoaService(PessoaRepository pessoaRepository, ModelMapper mapper) {
         this.pessoaRepository = pessoaRepository;
+        this.mapper = mapper;
     }
 
     public boolean cadastroCliente(CadastroDTO dto) {
@@ -21,20 +25,16 @@ public class PessoaService {
             return false;
         }
 
-        PessoaModel novaPessoa = new PessoaModel(
-            null,
-            dto.getNome(),
-            dto.getDataNascimento(),
-            dto.getTelefone(),
-            dto.getCPF(),
-            dto.getEmail(),
-            dto.getSenha(),
-            null,
-            null
-        );
+        try {
+            PessoaModel novaPessoa = mapper.map(dto, PessoaModel.class);
+            novaPessoa.setTier(TierConta.NENHUM);
+            novaPessoa.setEvento(null);
+            pessoaRepository.save(novaPessoa);
+            return true;
 
-        pessoaRepository.save(novaPessoa);
-        return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean validarLogin(LoginDTO loginDTO){ //Está mockado por enquanto

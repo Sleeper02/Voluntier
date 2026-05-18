@@ -1,6 +1,5 @@
 package Vteam.Voluntier.Pessoa.Model;
 
-import Vteam.Voluntier.Pessoa.TierConta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -32,6 +31,7 @@ public class PessoaModel {
     @NotNull(message = "Data de nascimento do usuario não pode ser vazio")
     private LocalDate dataNascimento; //(ano, mes, dia)
 
+    @NotNull(message = "Telefone de usuario não pode ser vazio")
     @Pattern(regexp = "^\\d{10,11}$", message = "O telefone deve conter apenas números e ter entre 10 e 11 dígitos (com DDD)")
     private String telefone;
 
