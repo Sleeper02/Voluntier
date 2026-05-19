@@ -63,6 +63,7 @@ public class PessoaService {
 
         pessoa.setPontos(pessoa.getPontos() + 1);
         pessoa.getEventosParticipados().add(eId);
+        pessoa.recalcularTiers();
         pessoaRepository.save(pessoa);
     }
 
