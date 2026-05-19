@@ -8,6 +8,7 @@ import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,8 +28,7 @@ public class PessoaService {
 
         try {
             PessoaModel novaPessoa = mapper.map(dto, PessoaModel.class);
-            novaPessoa.setTier(TierConta.NENHUM);
-            novaPessoa.setEvento(null);
+            novaPessoa.recalcularTiers();
             pessoaRepository.save(novaPessoa);
             return true;
 
@@ -55,5 +55,18 @@ public class PessoaService {
         }else {
             return false;
         }
+    }
+
+    public void registrarParticipacao(String pId, String eId){
+        PessoaModel pessoa = pessoaRepository.findById(pId).orElseThrow(()
+        -> new RuntimeException("Usuário não encontrado"));
+
+        pessoa.setPontos(pessoa.getPontos() + 1);
+        pessoa.getEventosParticipados().add(eId);
+        pessoaRepository.save(pessoa);
+    }
+
+    public List<PessoaModel> getRanking(){
+        return pessoaRepository.findAllByOrderByPontosDesc();
     }
 }

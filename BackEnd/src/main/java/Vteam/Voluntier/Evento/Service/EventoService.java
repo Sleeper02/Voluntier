@@ -1,8 +1,10 @@
 package Vteam.Voluntier.Evento.Service;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
 import Vteam.Voluntier.Evento.Model.EventoModel;
 import Vteam.Voluntier.Evento.Repository.EventoRepository;
+import Vteam.Voluntier.Pessoa.Service.PessoaService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,12 @@ public class EventoService {
 
     private final EventoRepository repository;
     private final ModelMapper mapper;
+    private PessoaService pessoaService;
 
-    public EventoService(EventoRepository repository, ModelMapper mapper) {
+    public EventoService(EventoRepository repository, ModelMapper mapper, PessoaService pessoaService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.pessoaService = pessoaService;
     }
 
     public Boolean criarEvento(CadastroEventoDTO cadastroEvento){
@@ -24,7 +28,6 @@ public class EventoService {
 //            }
         try {
             EventoModel evento = mapper.map(cadastroEvento, EventoModel.class);
-            evento.setInscritos(0);
             repository.save(evento);
 
             return true;
@@ -32,5 +35,24 @@ public class EventoService {
         }catch (Exception e){
             return false;
         }
+    }
+
+    public Boolean finalizarEvento(String id){
+        try {
+            EventoModel evento = repository.findById(id).orElseThrow(()
+                    -> new RuntimeException("Evento não encontrado"));
+
+            evento.setSolicitacao(EventoStatus.FINALIZADO);
+            repository.save(evento);
+
+            for (String pId : evento.getInscritos()){
+                pessoaService.registrarParticipacao(pId, id);
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 }
