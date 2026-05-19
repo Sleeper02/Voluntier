@@ -2,11 +2,14 @@ package Vteam.Voluntier.Pessoa.Controller;
 
 import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
+import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -44,5 +47,10 @@ public class PessoaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos!");
         }
 
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<PessoaModel>> ranking(){ //Mudar isso pra DTO mais pra frente
+        return ResponseEntity.ok(pessoaService.getRanking()); //Adicionar tratamento de erro
     }
 }
