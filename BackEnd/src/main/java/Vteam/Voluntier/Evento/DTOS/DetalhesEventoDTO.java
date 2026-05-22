@@ -2,6 +2,7 @@ package Vteam.Voluntier.Evento.DTOS;
 
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.TierEvento;
+import Vteam.Voluntier.Pessoa.Model.TierConta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,4 +46,7 @@ public class DetalhesEventoDTO {
 
     @Field("Fotos")
     private String fotos; //Colocar URL da foto
+
+    @Field("Recompensas")
+    private Map<TierConta, String> recompensas;
 }

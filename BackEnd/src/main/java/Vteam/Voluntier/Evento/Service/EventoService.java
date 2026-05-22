@@ -28,6 +28,9 @@ public class EventoService {
 //            }
         try {
             EventoModel evento = mapper.map(cadastroEvento, EventoModel.class);
+            if (evento.getRecompensas() == null) {
+                evento.setRecompensas(EventoModel.defaultRecompensas());
+            }
             repository.save(evento);
 
             return true;
