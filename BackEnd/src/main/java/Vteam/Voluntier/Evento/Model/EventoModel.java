@@ -3,7 +3,7 @@ package Vteam.Voluntier.Evento.Model;
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
 import Vteam.Voluntier.Evento.EnumsEvento.TierEvento;
-import Vteam.Voluntier.Pessoa.Model.TierConta;
+import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -38,7 +38,7 @@ public class EventoModel {
     private LocalDate dataHora;
 
     @NotBlank
-    @Field("IdInsituição")
+    @Field("IdInsituição") //vai ter que mudar esse idInstituição qnd implementamos o cadastro dela
     private String idInstituicao; //Verificar no service se existe
 
     @NotNull

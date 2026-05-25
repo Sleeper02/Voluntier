@@ -2,7 +2,11 @@ package Vteam.Voluntier.Evento.Repository;
 
 import Vteam.Voluntier.Evento.Model.EventoModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface EventoRepository extends MongoRepository<EventoModel, String> {
+    Optional<List<EventoModel>> findAllByIdInstituicao(String email);
+
 }

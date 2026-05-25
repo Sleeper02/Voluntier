@@ -1,11 +1,14 @@
 package Vteam.Voluntier.Evento.Controller;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.Service.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/evento")
 @RestController
@@ -37,5 +40,11 @@ public class EventoController {
         }else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao finalizar evento!");
         }
+    }
+
+    @GetMapping("/recompensas/{id}")
+    public ResponseEntity<List<ViewRecompensaDTO>> recompensasEvento(@PathVariable String id){ //Vou devolver todas as recompensas cadastradas por aquela empresa
+        List<ViewRecompensaDTO> list = service.recompensasEvento(id);
+        return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 }

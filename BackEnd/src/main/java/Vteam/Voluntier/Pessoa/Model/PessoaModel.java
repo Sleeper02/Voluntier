@@ -1,5 +1,6 @@
 package Vteam.Voluntier.Pessoa.Model;
 
+import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

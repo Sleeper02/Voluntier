@@ -2,7 +2,7 @@ package Vteam.Voluntier.Evento.DTOS;
 
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.TierEvento;
-import Vteam.Voluntier.Pessoa.Model.TierConta;
+import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
