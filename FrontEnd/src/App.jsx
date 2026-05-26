@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import EventoDescricao from "./pages/Descrição do Evento"
 import CadastroEvento from "./pages/Cadastro de Evento"
 import CadastrarEvento from "./pages/Cadastrar Evento"
+import Ranking from "./pages/Ranking"
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/eventodescricao" element={<EventoDescricao />} />
         <Route path="/cadastroevento" element={<CadastroEvento />} />
         <Route path="/cadastrarevento" element={<CadastrarEvento />} />
+        <Route path="/ranking" element={<Ranking />} />
       </Routes>
     </BrowserRouter>
   )
