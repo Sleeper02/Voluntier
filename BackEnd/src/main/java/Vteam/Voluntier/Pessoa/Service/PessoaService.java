@@ -1,7 +1,10 @@
 package Vteam.Voluntier.Pessoa.Service;
 
+import Vteam.Voluntier.Evento.Repository.EventoRepository;
 import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
+import Vteam.Voluntier.Pessoa.DTOS.RecompensaPessoaDTO;
+import Vteam.Voluntier.Pessoa.DTOS.ViewRecompensaPessoalDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
 import org.modelmapper.ModelMapper;
@@ -13,12 +16,15 @@ import java.util.Optional;
 @Service
 public class PessoaService {
     private final PessoaRepository pessoaRepository;
+    private final EventoRepository eventoRepository;
     private final ModelMapper mapper;
 
-    public PessoaService(PessoaRepository pessoaRepository, ModelMapper mapper) {
+    public PessoaService(PessoaRepository pessoaRepository, EventoRepository eventoRepository, ModelMapper mapper) {
         this.pessoaRepository = pessoaRepository;
+        this.eventoRepository = eventoRepository;
         this.mapper = mapper;
     }
+
 
     public boolean cadastroCliente(CadastroDTO dto) {
         if (pessoaRepository.existsByEmail(dto.getEmail()) || pessoaRepository.existsByCPF(dto.getCPF())) {
@@ -68,5 +74,36 @@ public class PessoaService {
 
     public List<PessoaModel> getRanking(){
         return pessoaRepository.findAllByOrderByPontosDesc();
+    }
+
+    public ViewRecompensaPessoalDTO recompensaPessoa(String pessoaId){
+        PessoaModel pessoa = pessoaRepository.findById(pessoaId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<RecompensaPessoaDTO> recompensa = pessoa.getEventosParticipados().stream()
+                .map(eventoId -> eventoRepository.findById(eventoId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(evento -> new RecompensaPessoaDTO(
+                        "mock instituição",
+                        evento.getTitulo(),
+                        evento.getRecompensas().get(pessoa.getTier()),
+                        pessoa.getTier()
+                ))
+                .toList();
+
+        return new ViewRecompensaPessoalDTO(
+                pessoa.getTier(),
+                proxTier(pessoa.getPontos()),
+                recompensa
+        );
+    }
+
+    private int proxTier(int pontos){
+        if (pontos < 10)  return 10  - pontos;
+        if (pontos < 25)  return 25  - pontos;
+        if (pontos < 50)  return 50  - pontos;
+        if (pontos < 100) return 100 - pontos;
+        return 0; // já é DIAMANTE
     }
 }
