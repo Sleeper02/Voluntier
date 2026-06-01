@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventoRepository extends MongoRepository<EventoModel, String> {
-    Optional<List<EventoModel>> findAllByIdInstituicao(String email);
-
+    Optional<List<EventoModel>> findAllByIdInstituicao(String idInstituicao);
+    List<EventoModel> findAllByIdInstituicaoOrderByDataHoraAsc(String idInstituicao);
+    List<EventoModel> findAllByIdInstituicaoOrderByDataHoraDesc(String idInstituicao);
 }
