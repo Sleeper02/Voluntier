@@ -3,6 +3,7 @@ package Vteam.Voluntier.Evento.Model;
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
 import Vteam.Voluntier.Evento.EnumsEvento.TierEvento;
+import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,7 +38,7 @@ public class EventoModel {
     private LocalDate dataHora;
 
     @NotBlank
-    @Field("IdInsituição")
+    @Field("IdInsituição") //vai ter que mudar esse idInstituição qnd implementamos o cadastro dela
     private String idInstituicao; //Verificar no service se existe
 
     @NotNull
@@ -60,4 +63,15 @@ public class EventoModel {
 
     @Field("Fotos")
     private String fotos; //Colocar URL da foto
+
+    @Field("Recompensas")
+    private Map<TierConta, String> recompensas = defaultRecompensas();
+
+    public static Map<TierConta, String> defaultRecompensas() {
+        Map<TierConta, String> map = new EnumMap<>(TierConta.class);
+        for (TierConta tier : TierConta.values()) {
+            map.put(tier, "NULL");
+        }
+        return map;
+    }
 }

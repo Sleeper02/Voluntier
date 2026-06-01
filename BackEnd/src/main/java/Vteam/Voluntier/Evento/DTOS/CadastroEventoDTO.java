@@ -3,14 +3,13 @@ package Vteam.Voluntier.Evento.DTOS;
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
 import Vteam.Voluntier.Evento.EnumsEvento.TierEvento;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,4 +27,5 @@ public class CadastroEventoDTO {
     private AreaAtuacao areaAtuacao;
     private TierEvento tier;
     private String fotos;
+    private Map<TierConta, String> recompensas;
 }

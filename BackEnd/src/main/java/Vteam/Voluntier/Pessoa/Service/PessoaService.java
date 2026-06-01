@@ -3,7 +3,6 @@ package Vteam.Voluntier.Pessoa.Service;
 import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
-import Vteam.Voluntier.Pessoa.Model.TierConta;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

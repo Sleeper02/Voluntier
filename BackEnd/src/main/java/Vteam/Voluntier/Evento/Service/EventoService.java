@@ -1,12 +1,17 @@
 package Vteam.Voluntier.Evento.Service;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
 import Vteam.Voluntier.Evento.Model.EventoModel;
 import Vteam.Voluntier.Evento.Repository.EventoRepository;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.View;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventoService {
@@ -28,6 +33,10 @@ public class EventoService {
 //            }
         try {
             EventoModel evento = mapper.map(cadastroEvento, EventoModel.class);
+            evento.setId(null);
+            if (evento.getRecompensas() == null) {
+                evento.setRecompensas(EventoModel.defaultRecompensas());
+            }
             repository.save(evento);
 
             return true;
@@ -54,5 +63,21 @@ public class EventoService {
             return false;
         }
 
+    }
+
+    public List<ViewRecompensaDTO> recompensasEvento (String id){
+        List<EventoModel> eventoInst = repository.findAllByIdInstituicao(id)
+                .orElse(List.of());
+
+        return eventoInst.stream()
+                .flatMap(evento -> evento.getRecompensas().entrySet().stream()
+                        .map(entrada -> new ViewRecompensaDTO(
+                                evento.getTitulo(),
+                                evento.getId(),
+                                entrada.getValue(), // recompensa (descrição)
+                                entrada.getKey() // tierConta
+                        ))
+                )
+                        .toList();
     }
 }
