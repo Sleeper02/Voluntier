@@ -2,6 +2,7 @@ package Vteam.Voluntier.Pessoa.Controller;
 
 import Vteam.Voluntier.Pessoa.DTOS.CadastroDTO;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
+import Vteam.Voluntier.Pessoa.DTOS.ViewRecompensaPessoalDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
 import jakarta.validation.Valid;
@@ -52,5 +53,11 @@ public class PessoaController {
     @GetMapping("/ranking")
     public ResponseEntity<List<PessoaModel>> ranking(){ //Mudar isso pra DTO mais pra frente
         return ResponseEntity.ok(pessoaService.getRanking()); //Adicionar tratamento de erro
+    }
+
+    @GetMapping("/recompensas/{id}")
+    public ResponseEntity<ViewRecompensaPessoalDTO> recompensas(@PathVariable String id){
+        ViewRecompensaPessoalDTO response = pessoaService.recompensaPessoa(id);
+        return ResponseEntity.ok(response);
     }
 }
