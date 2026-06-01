@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class EventoModel {
 
     @NotNull
     @Field("DataEvento")
-    private LocalDate dataHora;
+    private LocalDateTime dataHora;
 
     @NotBlank
     @Field("IdInsituição") //vai ter que mudar esse idInstituição qnd implementamos o cadastro dela
