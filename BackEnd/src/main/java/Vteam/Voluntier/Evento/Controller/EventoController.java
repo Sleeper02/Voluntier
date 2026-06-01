@@ -5,13 +5,10 @@ import Vteam.Voluntier.Evento.Service.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/evento")
-@Controller
+@RestController
 public class EventoController {
     private EventoService service;
 
@@ -29,5 +26,16 @@ public class EventoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar evento!");
         }
 
+    }
+
+    @PatchMapping("/{id}/finalizar")
+    public ResponseEntity<String> finalizarEvento(@PathVariable String id){
+        boolean response = service.finalizarEvento(id);
+
+        if(response) {
+            return ResponseEntity.status(HttpStatus.OK).body("Evento Finalizado com sucesso!");
+        }else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao finalizar evento!");
+        }
     }
 }

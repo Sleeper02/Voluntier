@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,5 +54,16 @@ public class PessoaModel {
 
     private TierConta tier; //mock
 
-    private Object evento; //mock
+    private int pontos;
+
+    private List<String> eventosParticipados = new ArrayList<>(); // salva o ID do evento
+
+    public void recalcularTiers() {
+        if (pontos >= 100) this.tier = TierConta.DIAMANTE;
+        else if (pontos >= 50) this.tier = TierConta.OURO;
+        else if (pontos >= 25) this.tier = TierConta.PRATA;
+        else if (pontos >= 10) this.tier = TierConta.BRONZE;
+        else this.tier = TierConta.NENHUM;
+    }
+
 }

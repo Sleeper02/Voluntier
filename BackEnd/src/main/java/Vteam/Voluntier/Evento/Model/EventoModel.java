@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,7 +44,7 @@ public class EventoModel {
 
     @NotNull
     @Field("Inscritos")
-    private int inscritos;
+    private List<String> inscritos = new ArrayList<>();
 
     @Field("Descrição Evento")
     private String descricao;
