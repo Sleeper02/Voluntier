@@ -1,13 +1,24 @@
 import { useState } from "react";
 
-function SearchBar() {
+interface SearchBarProps {
+  placeholder?: string;
+  width?: string;
+}
+
+function SearchBar({
+  placeholder = "Buscar",
+  width = "300px",
+}: SearchBarProps) {
   const [value, setValue] = useState("");
 
   return (
-    <div className="flex items-center bg-[#B5C4C6] rounded-full px-4 py-2 w-[300px] max-w-sm">
+    <div
+      className="flex items-center bg-[#B5C4C6] rounded-full px-4 py-2"
+      style={{ width }}
+    >
       <input
         type="text"
-        placeholder="Buscar usuário"
+        placeholder={placeholder}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className="bg-transparent outline-none flex-1 text-sm font-medium text-gray-700 placeholder-gray-600"
@@ -29,4 +40,5 @@ function SearchBar() {
     </div>
   );
 }
+
 export default SearchBar;

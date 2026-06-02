@@ -8,6 +8,7 @@ import Ranking from "./pages/Ranking"
 import Recompensas from "./pages/Recompensas"
 import RecompensasInstitucional from "./pages/Recompensas Institucional"
 import VisualizacaoEventosInscritos from "./pages/Visualização Eventos Inscritos"
+import Eventos from "./pages/Eventos"
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/eventodescricao" element={<EventoDescricao />} />
         <Route path="/cadastroevento" element={<CadastroEvento />} />
         <Route path="/cadastrarevento" element={<CadastrarEvento />} />
+        <Route path="/eventos" element={<Eventos />} />
         <Route path="/ranking" element={<Ranking />} />
         <Route path="/recompensas" element={<Recompensas />} />
         <Route path="/recompensasinstitucional" element={<RecompensasInstitucional />} />
