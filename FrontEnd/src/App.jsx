@@ -6,6 +6,7 @@ import CadastroEvento from "./pages/Cadastro de Evento"
 import CadastrarEvento from "./pages/Cadastrar Evento"
 import Ranking from "./pages/Ranking"
 import Recompensas from "./pages/Recompensas"
+import RecompensasInstitucional from "./pages/Recompensas Institucional"
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/cadastrarevento" element={<CadastrarEvento />} />
         <Route path="/ranking" element={<Ranking />} />
         <Route path="/recompensas" element={<Recompensas />} />
+        <Route path="/recompensasinstitucional" element={<RecompensasInstitucional />} />
       </Routes>
     </BrowserRouter>
   )
