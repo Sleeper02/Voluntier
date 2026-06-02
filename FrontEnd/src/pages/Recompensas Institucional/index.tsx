@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
 import GridRecompensas from "../../components/gridrecompensas";
