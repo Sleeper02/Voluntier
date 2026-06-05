@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventoRepository extends MongoRepository<EventoModel, String> {
-    Optional<List<EventoModel>> findAllByIdInstituicao(String email);
     List<EventoModel> findBySolicitacao(EventoStatus solicitacao, Sort sort);
-
-
+    Optional<List<EventoModel>> findAllByIdInstituicao(String idInstituicao);
+    List<EventoModel> findAllByIdInstituicaoOrderByDataHoraAsc(String idInstituicao);
+    List<EventoModel> findAllByIdInstituicaoOrderByDataHoraDesc(String idInstituicao);
 }

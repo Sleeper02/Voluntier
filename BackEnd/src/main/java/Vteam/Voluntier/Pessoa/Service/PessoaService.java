@@ -99,6 +99,11 @@ public class PessoaService {
         );
     }
 
+    public PessoaModel buscarPorId(String id) {
+        return pessoaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pessoa não encontrada"));
+    }
+
     private int proxTier(int pontos){
         if (pontos < 10)  return 10  - pontos;
         if (pontos < 25)  return 25  - pontos;
