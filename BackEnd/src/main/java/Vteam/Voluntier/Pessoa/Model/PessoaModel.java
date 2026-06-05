@@ -53,7 +53,7 @@ public class PessoaModel {
     @JsonIgnore
     private String senha;
 
-    private TierConta tier; //mock
+    private TierConta tier;
 
     private int pontos;
 

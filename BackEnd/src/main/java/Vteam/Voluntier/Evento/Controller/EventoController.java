@@ -1,11 +1,12 @@
 package Vteam.Voluntier.Evento.Controller;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.DTOS.EventosVoluntarioDTO;
+import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.Service.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,8 +44,28 @@ public class EventoController {
     }
 
     @GetMapping("/recompensas/{id}")
-    public ResponseEntity<List<ViewRecompensaDTO>> recompensasEvento(@PathVariable String id){ //Vou devolver todas as recompensas cadastradas por aquela empresa
+    public ResponseEntity<List<ViewRecompensaDTO>> recompensasEvento(@PathVariable String id){
         List<ViewRecompensaDTO> list = service.recompensasEvento(id);
         return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @GetMapping("/instituicao/{idInstituicao}")
+    public ResponseEntity<List<ListagemEventoDTO>> listarEventosInstituicao(
+            @PathVariable String idInstituicao,
+            @RequestParam(defaultValue = "asc") String ordem) {
+        List<ListagemEventoDTO> eventos = service.listarEventosInstituicao(idInstituicao, ordem);
+        return ResponseEntity.ok(eventos);
+    }
+
+    @GetMapping("/voluntario/{idPessoa}")
+    public ResponseEntity<EventosVoluntarioDTO> listarEventosVoluntario(
+            @PathVariable String idPessoa,
+            @RequestParam(defaultValue = "asc") String ordem) {
+        try {
+            EventosVoluntarioDTO eventos = service.listarEventosVoluntario(idPessoa, ordem);
+            return ResponseEntity.ok(eventos);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
