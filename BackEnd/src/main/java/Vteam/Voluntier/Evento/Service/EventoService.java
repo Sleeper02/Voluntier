@@ -11,11 +11,14 @@ import Vteam.Voluntier.Inscricao.Enum.SolicitacaoEnum;
 import Vteam.Voluntier.Inscricao.Repository.InscricaoRepository;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
+import jdk.jfr.Event;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.View;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,6 +46,7 @@ public class EventoService {
         try {
             EventoModel evento = mapper.map(cadastroEvento, EventoModel.class);
             evento.setId(null);
+            evento.setDataCriacao(LocalDate.now(ZoneId.of("America/Sao_Paulo")));
             if (evento.getRecompensas() == null) {
                 evento.setRecompensas(EventoModel.defaultRecompensas());
             }
@@ -127,5 +131,20 @@ public class EventoService {
                         ))
                 )
                         .toList();
+    }
+
+    public List<ListagemEventoDTO> listarEventos(String ordenar){
+        List<EventoModel> eventos = repository.findAll();
+
+        Comparator<EventoModel> comparator = switch (ordenar){
+            case "realizacao" -> Comparator.comparing(EventoModel :: getDataHora);
+            default -> Comparator.comparing(EventoModel :: getDataCriacao);
+        };
+
+        return eventos.stream()
+                .filter(e -> e.getSolicitacao() == EventoStatus.APROVADO)
+                .sorted(comparator)
+                .map(e -> mapper.map(e, ListagemEventoDTO.class))
+                .toList();
     }
 }

@@ -1,7 +1,6 @@
 package Vteam.Voluntier.Evento.Controller;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
-import Vteam.Voluntier.Evento.DTOS.EventosVoluntarioDTO;
 import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.Service.EventoService;
@@ -49,23 +48,16 @@ public class EventoController {
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @GetMapping("/instituicao/{idInstituicao}")
-    public ResponseEntity<List<ListagemEventoDTO>> listarEventosInstituicao(
-            @PathVariable String idInstituicao,
-            @RequestParam(defaultValue = "asc") String ordem) {
-        List<ListagemEventoDTO> eventos = service.listarEventosInstituicao(idInstituicao, ordem);
-        return ResponseEntity.ok(eventos);
-    }
-
-    @GetMapping("/voluntario/{idPessoa}")
-    public ResponseEntity<EventosVoluntarioDTO> listarEventosVoluntario(
-            @PathVariable String idPessoa,
-            @RequestParam(defaultValue = "asc") String ordem) {
-        try {
-            EventosVoluntarioDTO eventos = service.listarEventosVoluntario(idPessoa, ordem);
+    @GetMapping("/listar") //evento/listar?ordenar=realizacao
+    public ResponseEntity<?> listarEvento(
+            @RequestParam(defaultValue = "criacao") String ordenar){
+        try{
+            List<ListagemEventoDTO> eventos = service.listarEventos(ordenar);
             return ResponseEntity.ok(eventos);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao listar eventos: " + e.getMessage());
         }
+
     }
 }

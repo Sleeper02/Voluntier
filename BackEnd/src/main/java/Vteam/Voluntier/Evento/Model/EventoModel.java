@@ -38,6 +38,12 @@ public class EventoModel {
     @Field("DataEvento")
     private LocalDateTime dataHora;
 
+    @Field("DataCriacao")
+    private LocalDate dataCriacao;
+
+    @Field("Localizacao")
+    private String localizacao;
+
     @NotBlank
     @Field("IdInsituição") //vai ter que mudar esse idInstituição qnd implementamos o cadastro dela
     private String idInstituicao; //Verificar no service se existe
@@ -63,7 +69,7 @@ public class EventoModel {
     private TierEvento tier;
 
     @Field("Fotos")
-    private String fotos; //Colocar URL da foto
+    private List<String> fotos; //Colocar URL da foto
 
     @Field("Recompensas")
     private Map<TierConta, String> recompensas = defaultRecompensas();
