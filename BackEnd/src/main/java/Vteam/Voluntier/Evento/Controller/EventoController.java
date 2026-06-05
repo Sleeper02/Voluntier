@@ -1,6 +1,7 @@
 package Vteam.Voluntier.Evento.Controller;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.Service.EventoService;
 import org.springframework.http.HttpStatus;
@@ -46,5 +47,18 @@ public class EventoController {
     public ResponseEntity<List<ViewRecompensaDTO>> recompensasEvento(@PathVariable String id){ //Vou devolver todas as recompensas cadastradas por aquela empresa
         List<ViewRecompensaDTO> list = service.recompensasEvento(id);
         return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @GetMapping("/listar") //evento/listar?ordenar=realizacao
+    public ResponseEntity<?> listarEvento(
+            @RequestParam(defaultValue = "criacao") String ordenar){
+        try{
+            List<ListagemEventoDTO> eventos = service.listarEventos(ordenar);
+            return ResponseEntity.ok(eventos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao listar eventos: " + e.getMessage());
+        }
+
     }
 }
