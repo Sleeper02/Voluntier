@@ -1,10 +1,14 @@
 package Vteam.Voluntier.Evento.Service;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.DTOS.DetalhesEventoDTO;
+import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.Model.EventoModel;
 import Vteam.Voluntier.Evento.Repository.EventoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EventoService {
@@ -32,5 +36,13 @@ public class EventoService {
         }catch (Exception e){
             return false;
         }
+    }
+
+    public List<DetalhesEventoDTO> buscarPorTag(String tag) {
+        AreaAtuacao area = AreaAtuacao.valueOf(tag.toUpperCase());
+        return repository.findByAreaAtuacao(area)
+                .stream()
+                .map(evento -> mapper.map(evento, DetalhesEventoDTO.class))
+                .toList();
     }
 }
