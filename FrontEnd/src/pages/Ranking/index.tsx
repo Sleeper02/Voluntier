@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import NavBar from "../../components/NavBar";
+import NavBar from "../../components/navbar";
 import FooterWhite from "../../components/footerwhite";
 import SearchBar from "../../components/searchbar";
 
-import RankingList from "../../components/RankingList";
-import Pagination from "../../components/Pagination";
+import RankingList from "../../components/rankinglist";
+import Pagination from "../../components/pagination";
 
 import rankingcapa from "../../assets/rankingcapa (2).png";
 
