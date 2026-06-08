@@ -8,30 +8,24 @@ import medico1 from "../../assets/medico1.png";
 import medico2 from "../../assets/medico2.png";
 import medico3 from "../../assets/medico3.png";
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { Button } from "@/components/ui/button";
 
 function EventoDescricao() {
-
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const [conflictType, setConflictType] = useState<
     "NONE" | "SAME_DAY" | "SAME_DAY_AND_TIME"
-  >("NONE");
+  >("SAME_DAY_AND_TIME");
 
   const handleSubscription = async () => {
-
     const mockResponse = {
       success: true,
       conflictType: "NONE",
     };
 
-    setConflictType(mockResponse.conflictType);
+    setConflictType("NONE");
 
     if (mockResponse.conflictType === "SAME_DAY_AND_TIME") {
       return;
@@ -117,26 +111,38 @@ function EventoDescricao() {
 
         <div className="max-w-[1150px] mx-auto mt-8">
           {conflictType === "SAME_DAY" && (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
+            <Alert
+              className="border-red-500 bg-red-50 text-red-900"
+              variant="destructive"
+            >
+              <AlertCircle className="h-5 w-5 text-red-600" />
+              <div>
+                <AlertTitle className="text-left font-bold">
+                  Conflito de dia
+                </AlertTitle>
 
-              <AlertTitle>Atenção</AlertTitle>
-
-              <AlertDescription>
-                Você já possui um evento nesse mesmo dia.
-              </AlertDescription>
+                <AlertDescription className="text-left">
+                  Você já possui um evento nesse mesmo dia.
+                </AlertDescription>
+              </div>
             </Alert>
           )}
 
           {conflictType === "SAME_DAY_AND_TIME" && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+            <Alert
+              className="border-red-500 bg-red-50 text-red-900"
+              variant="destructive"
+            >
+              <AlertCircle className="h-5 w-5 text-red-600" />
+            <div>
+              <AlertTitle className="text-left font-bold">
+                Conflito de horário
+              </AlertTitle>
 
-              <AlertTitle>Conflito de horário</AlertTitle>
-
-              <AlertDescription>
+              <AlertDescription className="text-left">
                 Você já possui um evento nesse mesmo dia e horário.
               </AlertDescription>
+              </div>
             </Alert>
           )}
         </div>
