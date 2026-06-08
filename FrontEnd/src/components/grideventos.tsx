@@ -1,53 +1,16 @@
-import medico1 from "../assets/medico1.png";
-import energisa from "../assets/energisa.png";
-import cachorro from "../assets/cachorro.png";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
 
-function GridEventos() {
-  const eventos = [
-    {
-      id: 1,
-      nome: "Unimed - Pequenos Cuidados",
-      descricao: "Área da saúde, atendimento infantil.",
-      imagem: medico1,
-    },
-    {
-      id: 2,
-      nome: "Energisa - Cidade Limpa",
-      descricao: "Limpeza e coleta de lixo na cidade.",
-      imagem: energisa,
-    },
-    {
-      id: 3,
-      nome: "Cobasi - Lar Pet Lar",
-      descricao: "Feira de adoção de animais.",
-      imagem: cachorro,
-    },
-    {
-      id: 4,
-      nome: "Unimed - Pequenos Cuidados",
-      descricao: "Área da saúde, atendimento infantil.",
-      imagem: medico1,
-    },
-    {
-      id: 5,
-      nome: "Energisa - Cidade Limpa",
-      descricao: "Limpeza e coleta de lixo na cidade.",
-      imagem: energisa,
-    },
-  ];
-
+function GridEventos({ eventos }) {
   return (
     <div className="w-[1024px] mx-auto mt-10 px-10">
       <Swiper
         modules={[Navigation]}
         navigation
-        loop={true}
+        loop={eventos.length > 3}
         slidesPerView={3}
         spaceBetween={22}
       >
