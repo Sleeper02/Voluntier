@@ -12,26 +12,53 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { Button } from "@/components/ui/button";
 
-function EventoDescricao() {
-  const [isSubscribed, setIsSubscribed] = useState(false);
+type ConflictType = "NONE" | "SAME_DAY" | "SAME_DAY_AND_TIME";
 
-  const [conflictType, setConflictType] = useState<
-    "NONE" | "SAME_DAY" | "SAME_DAY_AND_TIME"
-  >("SAME_DAY_AND_TIME");
+type EventStatus = "ATIVO" | "CANCELADO";
+
+interface Evento {
+  id: number;
+  titulo: string;
+  cidade: string;
+  data: string;
+  status: EventStatus;
+  inscrito: boolean;
+  conflictType: ConflictType;
+}
+
+function EventoDescricao() {
+  const [evento, setEvento] = useState<Evento>({
+    id: 1,
+    titulo: "Pequenos Cuidados",
+    cidade: "Presidente Prudente - SP",
+    data: "18/04 e 19/04",
+    status: "ATIVO",
+    inscrito: false,
+    conflictType: "NONE",
+  });
 
   const handleSubscription = async () => {
     const mockResponse = {
       success: true,
-      conflictType: "NONE",
+      conflictType: "NONE" as ConflictType,
     };
 
-    setConflictType("NONE");
+    setEvento((prev) => ({
+      ...prev,
+      conflictType: mockResponse.conflictType,
+    }));
 
-    if (mockResponse.conflictType === "SAME_DAY_AND_TIME") {
+    if (
+      mockResponse.conflictType === "SAME_DAY_AND_TIME" ||
+      evento.status === "CANCELADO"
+    ) {
       return;
     }
 
-    setIsSubscribed((prev) => !prev);
+    setEvento((prev) => ({
+      ...prev,
+      inscrito: !prev.inscrito,
+    }));
   };
 
   return (
@@ -43,18 +70,18 @@ function EventoDescricao() {
       <section className="relative z-10 px-20 py-10">
         <div>
           <h1 className="text-[45px] font-extrabold leading-[65px] text-[#2C2C2C]">
-            Pequenos Cuidados
+            {evento.titulo}
           </h1>
 
           <div className="flex items-center gap-8 mt-3 text-[15px] text-[#444444]">
             <div className="flex items-center gap-2">
               <MapPin size={18} />
-              <span>Presidente Prudente - SP</span>
+              <span>{evento.cidade}</span>
             </div>
 
             <div className="flex items-center gap-2">
               <Calendar size={18} />
-              <span>18/04 e 19/04</span>
+              <span>{evento.data}</span>
             </div>
           </div>
         </div>
@@ -107,41 +134,54 @@ function EventoDescricao() {
           </p>
         </div>
 
-        {/* ALERTAS SHADCN */}
+        {/* ALERTAS */}
 
-        <div className="max-w-[1150px] mx-auto mt-8">
-          {conflictType === "SAME_DAY" && (
+        <div className="max-w-[1150px] mx-auto mt-8 space-y-4">
+          {evento.status === "CANCELADO" && (
             <Alert
               className="border-red-500 bg-red-50 text-red-900"
               variant="destructive"
             >
-              <AlertCircle className="h-5 w-5 text-red-600" />
+              <AlertCircle className="h-5 w-5" />
               <div>
-                <AlertTitle className="text-left font-bold">
-                  Conflito de dia
-                </AlertTitle>
+                <AlertTitle className="">Evento cancelado</AlertTitle>
 
-                <AlertDescription className="text-left">
+                <AlertDescription className="">
+                  Este evento foi cancelado pelo organizador. Novas inscrições
+                  não estão disponíveis.
+                </AlertDescription>
+              </div>
+            </Alert>
+          )}
+
+          {evento.conflictType === "SAME_DAY" && (
+            <Alert
+              className="border-yellow-500 bg-yellow-50 text-yellow-900"
+              variant="default"
+            >
+              <AlertCircle className="h-5 w-5" />
+              <div>
+                <AlertTitle className="">Atenção</AlertTitle>
+
+                <AlertDescription className="">
                   Você já possui um evento nesse mesmo dia.
                 </AlertDescription>
               </div>
             </Alert>
           )}
 
-          {conflictType === "SAME_DAY_AND_TIME" && (
+          {evento.conflictType === "SAME_DAY_AND_TIME" && (
             <Alert
               className="border-red-500 bg-red-50 text-red-900"
               variant="destructive"
             >
-              <AlertCircle className="h-5 w-5 text-red-600" />
-            <div>
-              <AlertTitle className="text-left font-bold">
-                Conflito de horário
-              </AlertTitle>
+              <AlertCircle className="h-5 w-5" />
+              <div>
+                <AlertTitle className="">Conflito de horário</AlertTitle>
 
-              <AlertDescription className="text-left">
-                Você já possui um evento nesse mesmo dia e horário.
-              </AlertDescription>
+                <AlertDescription className="">
+                  Você já possui um evento nesse mesmo dia e horário.
+                </AlertDescription>
               </div>
             </Alert>
           )}
@@ -150,7 +190,10 @@ function EventoDescricao() {
         <div className="flex justify-center mt-8">
           <Button
             onClick={handleSubscription}
-            disabled={conflictType === "SAME_DAY_AND_TIME"}
+            disabled={
+              evento.conflictType === "SAME_DAY_AND_TIME" ||
+              evento.status === "CANCELADO"
+            }
             className="
               bg-[#C96A3D]
               hover:bg-[#B85F34]
@@ -166,7 +209,11 @@ function EventoDescricao() {
               disabled:cursor-not-allowed
             "
           >
-            {isSubscribed ? "Cancelar inscrição" : "Inscreva-se"}
+            {evento.status === "CANCELADO"
+              ? "Evento cancelado"
+              : evento.inscrito
+                ? "Cancelar inscrição"
+                : "Inscreva-se"}
           </Button>
         </div>
       </section>
