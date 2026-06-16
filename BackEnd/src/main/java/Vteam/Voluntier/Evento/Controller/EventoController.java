@@ -3,11 +3,13 @@ package Vteam.Voluntier.Evento.Controller;
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
+import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.Service.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/evento")
@@ -48,16 +50,25 @@ public class EventoController {
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @GetMapping("/listar") //evento/listar?ordenar=realizacao
+    @GetMapping("/listar") //evento/listar?ordenar=realizacao&tag=MEIO_AMBIENTE
     public ResponseEntity<?> listarEvento(
-            @RequestParam(defaultValue = "criacao") String ordenar){
-        try{
-            List<ListagemEventoDTO> eventos = service.listarEventos(ordenar);
+            @RequestParam(defaultValue = "criacao") String ordenar,
+            @RequestParam(required = false) String tag) {
+        try {
+            AreaAtuacao areaAtuacao = null;
+            if (tag != null && !tag.isBlank()) {
+                try {
+                    areaAtuacao = AreaAtuacao.valueOf(tag.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Tag inválida: '" + tag + "'. Tags disponíveis: " + Arrays.toString(AreaAtuacao.values()));
+                }
+            }
+            List<ListagemEventoDTO> eventos = service.listarEventos(ordenar, areaAtuacao);
             return ResponseEntity.ok(eventos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao listar eventos: " + e.getMessage());
         }
-
     }
 }

@@ -4,6 +4,7 @@ import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.EventosVoluntarioDTO;
 import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
+import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.EnumsEvento.EventoStatus;
 import Vteam.Voluntier.Evento.Model.EventoModel;
 import Vteam.Voluntier.Evento.Repository.EventoRepository;
@@ -133,7 +134,7 @@ public class EventoService {
                         .toList();
     }
 
-    public List<ListagemEventoDTO> listarEventos(String ordenar){
+    public List<ListagemEventoDTO> listarEventos(String ordenar, AreaAtuacao tag){
         List<EventoModel> eventos = repository.findAll();
 
         Comparator<EventoModel> comparator = switch (ordenar){
@@ -143,6 +144,7 @@ public class EventoService {
 
         return eventos.stream()
                 .filter(e -> e.getSolicitacao() == EventoStatus.APROVADO)
+                .filter(e -> tag == null || e.getAreaAtuacao() == tag)
                 .sorted(comparator)
                 .map(e -> mapper.map(e, ListagemEventoDTO.class))
                 .toList();
