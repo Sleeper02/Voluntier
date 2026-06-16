@@ -8,7 +8,10 @@ import Ranking from "./pages/Ranking"
 import Recompensas from "./pages/Recompensas"
 import RecompensasInstitucional from "./pages/Recompensas Institucional"
 import VisualizacaoEventosInscritos from "./pages/Visualização Eventos Inscritos"
+import AvaliacaoEvento from "./pages/Avaliação Usuário"
+import AvaliacaoInstituicao from "./pages/Avaliação Instituição"
 import Eventos from "./pages/Eventos"
+import Home from "./pages/Home"
 
 function App() {
 
@@ -17,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/eventodescricao" element={<EventoDescricao />} />
         <Route path="/cadastroevento" element={<CadastroEvento />} />
         <Route path="/cadastrarevento" element={<CadastrarEvento />} />
@@ -25,6 +29,8 @@ function App() {
         <Route path="/recompensas" element={<Recompensas />} />
         <Route path="/recompensasinstitucional" element={<RecompensasInstitucional />} />
         <Route path="/eventosinscritos" element={<VisualizacaoEventosInscritos />} />
+        <Route path="/evento/:id/avaliacao" element={<AvaliacaoEvento />} />
+        <Route path="/evento/:id/avaliacaoresumo" element={<AvaliacaoInstituicao />} />
       </Routes>
     </BrowserRouter>
   )

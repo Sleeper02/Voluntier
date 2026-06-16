@@ -23,7 +23,7 @@ function GridEventos({ eventos }) {
                   alt={evento.nome}
                   className="w-full h-[190px] object-cover rounded-[18px]"
                 />
-
+                <a href="/eventodescricao">
                 <button
                   className="
                     absolute
@@ -44,6 +44,7 @@ function GridEventos({ eventos }) {
                 >
                   Inscreva-se
                 </button>
+                </a>
               </div>
 
               <div className="mt-2">

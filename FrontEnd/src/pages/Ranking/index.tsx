@@ -10,7 +10,6 @@ import Pagination from "../../components/pagination";
 import rankingcapa from "../../assets/rankingcapa (2).png";
 
 function Ranking() {
-
   const mockUsers = [
     { id: 1, username: "@user1", position: 1, events: 21 },
     { id: 2, username: "@user2", position: 2, events: 18 },
@@ -25,68 +24,110 @@ function Ranking() {
 
   const usersPerPage = 5;
 
-  const indexOfLastUser =
-    currentPage * usersPerPage;
+  const indexOfLastUser = currentPage * usersPerPage;
 
-  const indexOfFirstUser =
-    indexOfLastUser - usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
 
-  const currentUsers = mockUsers.slice(
-    indexOfFirstUser,
-    indexOfLastUser
-  );
+  const currentUsers = mockUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(
-    mockUsers.length / usersPerPage
-  );
+  const totalPages = Math.ceil(mockUsers.length / usersPerPage);
 
   return (
-    <main className="bg-[#FFFFFF] min-h-screen overflow-x-hidden">
-
+    <main className="bg-white min-h-screen overflow-x-hidden">
+      <NavBar />
       <section className="relative">
-
-        <NavBar />
-
-        <img
-          src={rankingcapa}
-          alt="Caparanking"
-          className="w-full h-auto object-cover absolute top-16"
-        />
-
-        <div className="relative px-10 py-20">
-          <h1 className="text-4xl font-bold mt-28 text-[#FFFAF2]">
-            ranking voluntário
-          </h1>
-
-          <h3 className="text-lg font-semibold mt-2 text-[#FFFAF2] w-[400px]">
-            colabore com a sociedade e veja sua posição no nosso ranking
-          </h3>
-        </div>
-
-        <div className="absolute flex items-center justify-between w-full px-10 py-10 top-[400px]">
-          <h1 className="text-2xl font-bold text-black">
-            Ranking
-          </h1>
-
-          <SearchBar />
-        </div>
-
-        <div className="mt-12 px-10">
-
-          <RankingList users={currentUsers} />
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
+        <section className="-mt-6">
+          <img
+            src={rankingcapa}
+            alt="Ranking Voluntários"
+            className="w-full object-cover"
           />
+        </section>
 
+        <div
+          className="
+            absolute
+            inset-0
+            flex
+            items-center
+          "
+        >
+          <div
+            className="
+              mt-24
+              px-6
+              md:px-10
+              max-w-[600px]
+            "
+          >
+            <h1
+              className="
+                text-3xl
+                md:text-5xl
+                font-bold
+                text-[#FFFAF2]
+              "
+            >
+              ranking voluntários
+            </h1>
+
+            <p
+              className="
+                text-sm
+                md:text-lg
+                font-medium
+                text-[#FFFAF2]
+                max-w-[400px]
+                mt-3
+              "
+            >
+              colabore com a sociedade e veja sua posição no nosso ranking
+            </p>
+          </div>
         </div>
+      </section>
 
+      {/* TÍTULO + BUSCA */}
+      <section
+        className="
+          flex
+          flex-col
+          md:flex-row
+          md:items-center
+          md:justify-between
+          gap-4
+          px-6
+          md:px-10
+        "
+      >
+        <h1
+          className="
+            text-2xl
+            md:text-3xl
+            font-bold
+            text-black
+          "
+        >
+          Ranking
+        </h1>
+
+        <div className="w-full md:w-[320px]">
+          <SearchBar placeholder="Buscar usuário" />
+        </div>
+      </section>
+
+      {/* LISTA */}
+      <section className="px-6 md:px-10 mt-8">
+        <RankingList users={currentUsers} />
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </section>
 
       <FooterWhite />
-
     </main>
   );
 }

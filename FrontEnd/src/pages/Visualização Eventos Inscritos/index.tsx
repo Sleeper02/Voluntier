@@ -48,11 +48,33 @@ function VisualizacaoEventosInscritos() {
           <img
             src={ondasblue}
             alt="Onda Azul"
-            className="w-full h-[180px] object-cover mt-10"
+            className="w-full h-auto object-cover mt-10"
           />
 
-          <div className="absolute top-24 left-10">
-            <h1 className="text-5xl font-bold text-white">MEUS EVENTOS</h1>
+          <div
+            className="
+      absolute
+      inset-0
+      flex
+      items-center
+      md:pl-14
+    "
+          >
+            <h1
+              className="
+              text-2xl
+              sm:text-3xl
+              md:text-6xl
+              lg:text-6xl
+              mt-10
+              md:mt-16
+              lg:mt-24
+              font-bold
+              text-white
+            "
+            >
+              MEUS EVENTOS
+            </h1>
           </div>
         </div>
         <div className="flex gap-2 mx-10 mt-4">

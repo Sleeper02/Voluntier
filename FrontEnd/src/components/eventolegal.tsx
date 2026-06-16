@@ -20,10 +20,10 @@ function EventoLegalBanner() {
             ambiental positivo, conectando pessoas, ideias e mudanças reais para
             um futuro melhor.
           </p>
-
           <div className="flex justify-center mt-8">
-            <button
-              className="
+            <a href="/cadastroevento">
+              <button
+                className="
                 bg-[#5E6B3F]
                 text-[#FFFFFF]
                 font-semibold
@@ -34,9 +34,10 @@ function EventoLegalBanner() {
                 hover:opacity-90
                 transition
               "
-            >
-              quero participar!
-            </button>
+              >
+                quero participar!
+              </button>
+            </a>
           </div>
         </div>
       </div>

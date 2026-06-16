@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MainNavBar from "../../components/mainnavbar";
+import NavBar from "@/components/navbar";
 import kid from "../../assets/kid.png";
 import medico1 from "../../assets/medico1.png";
 import energisa from "../../assets/energisa.png";
@@ -58,9 +58,9 @@ function Eventos() {
   return (
     <main className="bg-[#FFFAF2] min-h-screen overflow-x-hidden">
       <section className="relative">
-        <MainNavBar />
+        <NavBar />
 
-        <div className="relative w-[80%] mx-auto mt-4">
+        <div className="relative w-[70%] mx-auto mt-4">
           <img
             src={kid}
             alt="Criança"

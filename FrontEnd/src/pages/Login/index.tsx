@@ -22,7 +22,7 @@ function Login () {
                         backgroundImage: `url(${paint})`
                     }}
                 >
-                    <h2 className="text-xl font-bold">Voluntier.</h2>
+                    <a className="text-xl font-bold" href="/home">Voluntier.</a>
 
                     <div className="h-full flex flex-col justify-end">
                         <h1 className="text-[36px] font-bold leading-[30px]">
