@@ -1,6 +1,7 @@
 package Vteam.Voluntier.Inscricao.Controller;
 
 import Vteam.Voluntier.Inscricao.Service.InscricaoService;
+import Vteam.Voluntier.Security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ public class InscricaoController {
 
     @PostMapping("/{idPessoa}/{idEvento}")
     public ResponseEntity<String> inscrever(@PathVariable String idPessoa, @PathVariable String idEvento){
+        SecurityUtils.validarOwnership(idPessoa);
         try {
             inscricaoService.inscrever(idPessoa, idEvento);
             return ResponseEntity.status(HttpStatus.CREATED).body("Inscrito com sucesso!");
@@ -25,6 +27,7 @@ public class InscricaoController {
 
     @DeleteMapping("/{idPessoa}/{idEvento}")
     public ResponseEntity<String> cancelarInscricao(@PathVariable String idPessoa, @PathVariable String idEvento){
+        SecurityUtils.validarOwnership(idPessoa);
         try {
             inscricaoService.cancelarInscricao(idPessoa, idEvento);
             return ResponseEntity.status(HttpStatus.OK).body("Inscrição cancelada com sucesso!");

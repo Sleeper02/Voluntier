@@ -2,6 +2,7 @@ package Vteam.Voluntier.Avaliacao.Controller;
 
 import Vteam.Voluntier.Avaliacao.DTOs.CriarAvaliacaoDTO;
 import Vteam.Voluntier.Avaliacao.Service.AvaliacaoService;
+import Vteam.Voluntier.Security.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class AvaliacaoController {
     public ResponseEntity<String> avaliar(@Valid @RequestBody CriarAvaliacaoDTO avaliacaoDTO,
                                      @PathVariable String idPessoa,
                                      @PathVariable String idEvento){
-
+        SecurityUtils.validarOwnership(idPessoa);
         try{
             service.avaliar(idPessoa,idEvento,avaliacaoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("Evento avaliado com sucesso!");
@@ -31,6 +32,7 @@ public class AvaliacaoController {
     @GetMapping("/{idPessoa}/{idEvento}")
     public ResponseEntity<?> visualizarAvaliacao(@PathVariable String idPessoa,
                                                  @PathVariable String idEvento){
+        SecurityUtils.validarOwnership(idPessoa);
         try {
             return ResponseEntity.ok(service.visualizarAvaliacao(idPessoa, idEvento));
 
@@ -42,6 +44,7 @@ public class AvaliacaoController {
     @GetMapping("/eventos/{idInstituicao}/{idEvento}")
     public ResponseEntity<?> visualizarAvaliacoes(@PathVariable String idInstituicao,
                                                   @PathVariable String idEvento){
+        SecurityUtils.validarOwnership(idInstituicao);
         try{
             return ResponseEntity.ok(service.visualizarAvaliacoes(idInstituicao, idEvento));
         }catch (IllegalArgumentException e){

@@ -5,6 +5,7 @@ import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
 import Vteam.Voluntier.Evento.Service.EventoService;
+import Vteam.Voluntier.Security.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ public class EventoController {
 
     @PostMapping("/criar")
     public ResponseEntity<String> criarEvento(@RequestBody CadastroEventoDTO cadastroEvento){
+        // Garante que a instituição só cria eventos em nome próprio
+        SecurityUtils.validarOwnership(cadastroEvento.getIdInstituicao());
         Boolean response = service.criarEvento(cadastroEvento);
 
         if(response){
@@ -30,11 +33,11 @@ public class EventoController {
         }else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar evento!");
         }
-
     }
 
     @PatchMapping("/{id}/finalizar")
     public ResponseEntity<String> finalizarEvento(@PathVariable String id){
+        service.validarDonoDoEvento(id, SecurityUtils.getAuthenticatedId());
         boolean response = service.finalizarEvento(id);
 
         if(response) {
@@ -46,6 +49,7 @@ public class EventoController {
 
     @GetMapping("/recompensas/{id}")
     public ResponseEntity<List<ViewRecompensaDTO>> recompensasEvento(@PathVariable String id){
+        SecurityUtils.validarOwnership(id);
         List<ViewRecompensaDTO> list = service.recompensasEvento(id);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }

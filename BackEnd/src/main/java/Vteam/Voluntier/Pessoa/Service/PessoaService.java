@@ -7,7 +7,10 @@ import Vteam.Voluntier.Pessoa.DTOS.RecompensaPessoaDTO;
 import Vteam.Voluntier.Pessoa.DTOS.ViewRecompensaPessoalDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
+import Vteam.Voluntier.Security.JwtUtil;
+import Vteam.Voluntier.Security.LoginResponseDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +21,16 @@ public class PessoaService {
     private final PessoaRepository pessoaRepository;
     private final EventoRepository eventoRepository;
     private final ModelMapper mapper;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public PessoaService(PessoaRepository pessoaRepository, EventoRepository eventoRepository, ModelMapper mapper) {
+    public PessoaService(PessoaRepository pessoaRepository, EventoRepository eventoRepository,
+                         ModelMapper mapper, BCryptPasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.pessoaRepository = pessoaRepository;
         this.eventoRepository = eventoRepository;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -33,6 +41,7 @@ public class PessoaService {
 
         try {
             PessoaModel novaPessoa = mapper.map(dto, PessoaModel.class);
+            novaPessoa.setSenha(passwordEncoder.encode(novaPessoa.getSenha()));
             novaPessoa.recalcularTiers();
             pessoaRepository.save(novaPessoa);
             return true;
@@ -42,24 +51,16 @@ public class PessoaService {
         }
     }
 
-    public boolean validarLogin(LoginDTO loginDTO){ //Está mockado por enquanto
-        String email = loginDTO.getEmail();
-        String senha = loginDTO.getSenha();
+    public LoginResponseDTO validarLogin(LoginDTO loginDTO) {
+        PessoaModel user = pessoaRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Email ou senha incorretos"));
 
-
-        Optional<PessoaModel> emailEncontrado = pessoaRepository.findByEmail(email);
-
-        if(emailEncontrado.isEmpty()){
-            return false;
+        if (!passwordEncoder.matches(loginDTO.getSenha(), user.getSenha())) {
+            throw new IllegalArgumentException("Email ou senha incorretos");
         }
 
-        PessoaModel user = emailEncontrado.get();
-
-        if(senha.equals(user.getSenha())){
-            return true;
-        }else {
-            return false;
-        }
+        String token = jwtUtil.gerarToken(user.getID(), user.getRole().name());
+        return new LoginResponseDTO(token, user.getID(), user.getRole());
     }
 
     public void registrarParticipacao(String pId, String eId){

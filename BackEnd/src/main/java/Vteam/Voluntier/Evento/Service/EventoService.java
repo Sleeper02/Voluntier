@@ -12,14 +12,14 @@ import Vteam.Voluntier.Inscricao.Enum.SolicitacaoEnum;
 import Vteam.Voluntier.Inscricao.Repository.InscricaoRepository;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
-import jdk.jfr.Event;
+import Vteam.Voluntier.Security.AcessoNegadoException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.View;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +37,14 @@ public class EventoService {
         this.mapper = mapper;
         this.pessoaService = pessoaService;
         this.inscricaoRepository = inscricaoRepository;
+    }
+
+    public void validarDonoDoEvento(String idEvento, String idInstituicaoAutenticada) {
+        EventoModel evento = repository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
+        if (!evento.getIdInstituicao().equals(idInstituicaoAutenticada)) {
+            throw new AcessoNegadoException("Acesso não permitido");
+        }
     }
 
     public Boolean criarEvento(CadastroEventoDTO cadastroEvento){
@@ -115,7 +123,7 @@ public class EventoService {
     }
 
     private ListagemEventoDTO toListagemDTO(EventoModel e) {
-        return new ListagemEventoDTO(e.getId(), e.getTitulo(), e.getDataHora(), e.getSolicitacao(), e.getIdInstituicao());
+        return new ListagemEventoDTO(e.getId(), e.getTitulo(), e.getDescricao(), e.getDataCriacao(), e.getDataHora(), e.getLocalizacao(), e.getIdInstituicao());
     }
 
     public List<ViewRecompensaDTO> recompensasEvento (String id){

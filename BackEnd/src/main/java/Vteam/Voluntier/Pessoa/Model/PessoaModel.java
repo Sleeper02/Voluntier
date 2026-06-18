@@ -1,5 +1,6 @@
 package Vteam.Voluntier.Pessoa.Model;
 
+import Vteam.Voluntier.Pessoa.Enums.PerfilAcesso;
 import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
@@ -56,6 +57,8 @@ public class PessoaModel {
     private TierConta tier;
 
     private int pontos;
+
+    private PerfilAcesso role = PerfilAcesso.VOLUNTARIO;
 
     private List<String> eventosParticipados = new ArrayList<>(); // salva o ID do evento
 
