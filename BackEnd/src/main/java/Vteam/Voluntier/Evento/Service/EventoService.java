@@ -12,6 +12,9 @@ import Vteam.Voluntier.Inscricao.Enum.SolicitacaoEnum;
 import Vteam.Voluntier.Inscricao.Repository.InscricaoRepository;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
 import Vteam.Voluntier.Pessoa.Service.PessoaService;
+import Vteam.Voluntier.Bloqueio.Repository.BloqueioRepository;
+import Vteam.Voluntier.Security.SecurityUtils;
+import Vteam.Voluntier.Pessoa.Enums.PerfilAcesso;
 import Vteam.Voluntier.Security.AcessoNegadoException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,12 +34,14 @@ public class EventoService {
     private final ModelMapper mapper;
     private final PessoaService pessoaService;
     private final InscricaoRepository inscricaoRepository;
+    private final BloqueioRepository bloqueioRepository;
 
-    public EventoService(EventoRepository repository, ModelMapper mapper, PessoaService pessoaService, InscricaoRepository inscricaoRepository) {
+    public EventoService(EventoRepository repository, ModelMapper mapper, PessoaService pessoaService, InscricaoRepository inscricaoRepository, BloqueioRepository bloqueioRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.pessoaService = pessoaService;
         this.inscricaoRepository = inscricaoRepository;
+        this.bloqueioRepository = bloqueioRepository;
     }
 
     public void validarDonoDoEvento(String idEvento, String idInstituicaoAutenticada) {
@@ -110,14 +115,16 @@ public class EventoService {
                 .toList();
 
         List<ListagemEventoDTO> inscricoes = repository.findAllById(idsInscritos).stream()
-                .map(this::toListagemDTO)
-                .sorted(comparator)
-                .toList();
+            .filter(e -> !bloqueioRepository.existsByIdInstituicaoAndIdPessoa(e.getIdInstituicao(), idPessoa))
+            .map(this::toListagemDTO)
+            .sorted(comparator)
+            .toList();
 
         List<ListagemEventoDTO> participacoes = repository.findAllById(participadosSet).stream()
-                .map(this::toListagemDTO)
-                .sorted(comparator)
-                .toList();
+            .filter(e -> !bloqueioRepository.existsByIdInstituicaoAndIdPessoa(e.getIdInstituicao(), idPessoa))
+            .map(this::toListagemDTO)
+            .sorted(comparator)
+            .toList();
 
         return new EventosVoluntarioDTO(inscricoes, participacoes);
     }
@@ -150,9 +157,25 @@ public class EventoService {
             default -> Comparator.comparing(EventoModel :: getDataCriacao);
         };
 
+        // Se houver um usuário autenticado e for VOLUNTARIO, filtrar eventos de instituições que o bloquearam
+        String authIdTemp = null;
+        boolean isVoluntarioTemp = false;
+        try {
+            authIdTemp = SecurityUtils.getAuthenticatedId();
+            isVoluntarioTemp = SecurityUtils.getAuthenticatedRole() == PerfilAcesso.VOLUNTARIO;
+        } catch (Exception ignored) {
+        }
+
+        final String authId = authIdTemp;
+        final boolean isVoluntario = isVoluntarioTemp;
+
         return eventos.stream()
                 .filter(e -> e.getSolicitacao() == EventoStatus.APROVADO)
                 .filter(e -> tag == null || e.getAreaAtuacao() == tag)
+                .filter(e -> {
+                    if (!isVoluntario || authId == null) return true;
+                    return !bloqueioRepository.existsByIdInstituicaoAndIdPessoa(e.getIdInstituicao(), authId);
+                })
                 .sorted(comparator)
                 .map(e -> mapper.map(e, ListagemEventoDTO.class))
                 .toList();

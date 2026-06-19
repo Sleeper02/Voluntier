@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import Vteam.Voluntier.Bloqueio.Service.BloqueioService;
+import Vteam.Voluntier.Security.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,11 @@ import org.springframework.web.bind.annotation.*;
 public class InstituicaoController {
 
     private final InstituicaoService service;
+    private final BloqueioService bloqueioService;
 
-    public InstituicaoController(InstituicaoService service) {
+    public InstituicaoController(InstituicaoService service, BloqueioService bloqueioService) {
         this.service = service;
+        this.bloqueioService = bloqueioService;
     }
 
     @PostMapping("/Cadastro")
@@ -50,5 +54,13 @@ public class InstituicaoController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/{id}/bloquear/{idPessoa}")
+    public ResponseEntity<String> bloquearVoluntario(@PathVariable String id, @PathVariable String idPessoa) {
+        // Garante que a instituição só bloqueie em nome próprio
+        SecurityUtils.validarOwnership(id);
+        bloqueioService.bloquear(id, idPessoa);
+        return ResponseEntity.ok("Voluntário bloqueado com sucesso");
     }
 }
