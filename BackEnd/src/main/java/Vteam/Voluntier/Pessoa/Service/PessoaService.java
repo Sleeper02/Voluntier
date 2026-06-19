@@ -6,6 +6,7 @@ import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
 import Vteam.Voluntier.Pessoa.DTOS.RecompensaPessoaDTO;
 import Vteam.Voluntier.Pessoa.DTOS.ViewRecompensaPessoalDTO;
 import Vteam.Voluntier.Pessoa.Model.PessoaModel;
+import Vteam.Voluntier.Pessoa.Enums.PerfilAcesso;
 import Vteam.Voluntier.Pessoa.Repository.PessoaRepository;
 import Vteam.Voluntier.Security.JwtUtil;
 import Vteam.Voluntier.Security.LoginResponseDTO;
@@ -59,8 +60,9 @@ public class PessoaService {
             throw new IllegalArgumentException("Email ou senha incorretos");
         }
 
-        String token = jwtUtil.gerarToken(user.getID(), user.getRole().name());
-        return new LoginResponseDTO(token, user.getID(), user.getRole());
+        PerfilAcesso role = user.getRole() != null ? user.getRole() : PerfilAcesso.VOLUNTARIO;
+        String token = jwtUtil.gerarToken(user.getID(), role.name());
+        return new LoginResponseDTO(token, user.getID(), role);
     }
 
     public void registrarParticipacao(String pId, String eId){

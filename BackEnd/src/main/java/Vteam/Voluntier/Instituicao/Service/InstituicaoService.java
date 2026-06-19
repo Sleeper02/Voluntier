@@ -4,6 +4,7 @@ import Vteam.Voluntier.Instituicao.DTOs.CadastroInstituicaoDTO;
 import Vteam.Voluntier.Instituicao.Model.InstituicaoModel;
 import Vteam.Voluntier.Instituicao.Repository.InstituicaoRepository;
 import Vteam.Voluntier.Pessoa.DTOS.LoginDTO;
+import Vteam.Voluntier.Pessoa.Enums.PerfilAcesso;
 import Vteam.Voluntier.Security.JwtUtil;
 import Vteam.Voluntier.Security.LoginResponseDTO;
 import org.modelmapper.ModelMapper;
@@ -45,8 +46,9 @@ public class InstituicaoService {
             throw new IllegalArgumentException("Email ou senha incorretos");
         }
 
-        String token = jwtUtil.gerarToken(inst.getId(), inst.getRole().name());
-        return new LoginResponseDTO(token, inst.getId(), inst.getRole());
+        PerfilAcesso role = inst.getRole() != null ? inst.getRole() : PerfilAcesso.INSTITUICAO;
+        String token = jwtUtil.gerarToken(inst.getId(), role.name());
+        return new LoginResponseDTO(token, inst.getId(), role);
     }
 
     public InstituicaoModel buscarPorId(String id) {
