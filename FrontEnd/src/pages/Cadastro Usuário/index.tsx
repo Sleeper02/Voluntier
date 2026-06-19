@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import cadastroBg from "../../assets/cadastro-bg.png";
 import paint from "../../assets/paint.png";
 
-function Cadastro() {
+function CadastroUsuario() {
   const [step, setStep] = useState(1);
 
   return (
@@ -44,7 +44,17 @@ function Cadastro() {
                     type="text"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#C46F3C] mb-1">
+                    CPF
+                  </label>
 
+                  <input
+                    className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
+                    placeholder="Digite seu CPF"
+                    type="text"
+                  />
+                </div>
                 <div>
                   <label className="block text-xs font-semibold text-[#C46F3C] mb-1">
                     Telefone
@@ -75,6 +85,15 @@ function Cadastro() {
                 >
                   Continuar
                 </button>
+                <p className="mt-4 text-center text-xs">
+                  Já tem uma conta?{" "}
+                  <Link
+                    to="/login"
+                    className="font-semibold transition-all duration-300 hover:opacity-70 hover:translate-x-1"
+                  >
+                    Login
+                  </Link>
+                </p>
               </div>
             </div>
           </div>
@@ -217,4 +236,4 @@ function Cadastro() {
   );
 }
 
-export default Cadastro;
+export default CadastroUsuario;

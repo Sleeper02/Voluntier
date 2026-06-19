@@ -8,6 +8,10 @@ interface CardEventoProps {
   cidade: string;
   dataEvento: string;
   imagem: string;
+
+  concluido?: boolean;
+  acaoTexto?: string;
+  onAcao?: () => void;
 }
 
 function CardEvento({
@@ -18,6 +22,9 @@ function CardEvento({
   cidade,
   dataEvento,
   imagem,
+  concluido = false,
+  acaoTexto,
+  onAcao,
 }: CardEventoProps) {
   const [tempoRestante, setTempoRestante] = useState({
     dias: 0,
@@ -27,6 +34,8 @@ function CardEvento({
   });
 
   useEffect(() => {
+    if (concluido) return;
+
     const atualizarContagem = () => {
       const agora = new Date().getTime();
       const evento = new Date(dataEvento).getTime();
@@ -58,7 +67,7 @@ function CardEvento({
     const interval = setInterval(atualizarContagem, 1000);
 
     return () => clearInterval(interval);
-  }, [dataEvento]);
+  }, [dataEvento, concluido]);
 
   return (
     <div className="w-full border border-[#8B8B8B] rounded-3xl p-3 flex gap-5 bg-transparent">
@@ -69,21 +78,23 @@ function CardEvento({
       />
 
       <div className="flex-1">
-        <div className="bg-[#2C2C2C] rounded-2xl flex w-fit px-5 py-3 gap-6 text-white">
-          {[
-            { valor: tempoRestante.dias, label: "DIAS" },
-            { valor: tempoRestante.horas, label: "HORAS" },
-            { valor: tempoRestante.minutos, label: "MINUTOS" },
-            { valor: tempoRestante.segundos, label: "SEGUNDOS" },
-          ].map((item) => (
-            <div key={item.label} className="text-center">
-              <p className="text-lg font-bold leading-none">
-                {String(item.valor).padStart(2, "0")}
-              </p>
-              <p className="text-[9px]">{item.label}</p>
-            </div>
-          ))}
-        </div>
+        {!concluido && (
+          <div className="bg-[#2C2C2C] rounded-2xl flex w-fit px-5 py-3 gap-6 text-white">
+            {[
+              { valor: tempoRestante.dias, label: "DIAS" },
+              { valor: tempoRestante.horas, label: "HORAS" },
+              { valor: tempoRestante.minutos, label: "MINUTOS" },
+              { valor: tempoRestante.segundos, label: "SEGUNDOS" },
+            ].map((item) => (
+              <div key={item.label} className="text-center">
+                <p className="text-lg font-bold">
+                  {String(item.valor).padStart(2, "0")}
+                </p>
+                <p className="text-[9px]">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         <h2 className="text-3xl font-bold mt-4 text-black">{titulo}</h2>
 
@@ -95,11 +106,32 @@ function CardEvento({
             <p className="font-bold">{cidade}</p>
           </div>
 
-          <div>
+          <div className="text-right">
             <p className="font-bold">{endereco}</p>
+
             <p className="font-bold">
               {new Date(dataEvento).toLocaleString("pt-BR")}
             </p>
+
+            {acaoTexto && (
+              <button
+                onClick={onAcao}
+                className="
+                  mt-4
+                  bg-[#3E6F73]
+                  text-white
+                  px-5
+                  py-2
+                  rounded-full
+                  text-sm
+                  font-semibold
+                  hover:opacity-90
+                  transition
+                "
+              >
+                {acaoTexto}
+              </button>
+            )}
           </div>
         </div>
       </div>

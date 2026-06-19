@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
-
+import NuvemPalavras from "@/components/nuvempalavras";
 import ondas from "../../assets/ondas.png";
 import medico1 from "../../assets/medico1.png";
 import medico2 from "../../assets/medico2.png";
@@ -43,7 +43,9 @@ function AvaliacaoInstituicao() {
 
       frequenciaTermos: {
         BEM_ORGANIZADO: 45,
+        MAL_ORGANIZADO: 21,
         PONTUAL: 39,
+        ATRASADO: 18,
         BOA_COMUNICACAO: 31,
         IMPACTO_POSITIVO: 26,
         ESTRUTURA_ADEQUADA: 18,
@@ -112,6 +114,13 @@ function AvaliacaoInstituicao() {
       .replace(/_/g, " ")
       .toLowerCase()
       .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  const palavras = Object.entries(dashboard.frequenciaTermos).map(
+    ([termo, quantidade]) => ({
+      text: formatarTermo(termo),
+      value: quantidade,
+    }),
+  );
 
   return (
     <main className="bg-[#FFFAF2] min-h-screen overflow-x-hidden">
@@ -230,31 +239,11 @@ function AvaliacaoInstituicao() {
           </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-sm mt-8">
-            <h3 className="font-bold text-xl text-[#2C2C2C] mb-6">
-              Termos mais citados
+            <h3 className="font-bold text-xl text-[#2C2C2C] mb-8 text-center">
+              Word Cloud dos termos mais citados
             </h3>
 
-            <div className="flex flex-wrap gap-3">
-              {Object.entries(dashboard.frequenciaTermos).map(
-                ([termo, quantidade]) => (
-                  <div
-                    key={termo}
-                    className="
-                    bg-[#FFF1EA]
-                    border
-                    border-[#C96A3D]
-                    text-[#C96A3D]
-                    px-4
-                    py-2
-                    rounded-full
-                    font-medium
-                  "
-                  >
-                    {formatarTermo(termo)} ({quantidade})
-                  </div>
-                ),
-              )}
-            </div>
+            <NuvemPalavras palavras={palavras} />
           </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-sm mt-8">

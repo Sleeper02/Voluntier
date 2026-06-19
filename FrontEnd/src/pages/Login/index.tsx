@@ -30,7 +30,7 @@ function Login () {
                         </h1>
 
                         <p className="mt-4 text-sm">
-                            Crie sua conta agora e comece com projetos que façam sentido para você.
+                            Faça seu login agora e se conecte com projetos que façam sentido para você.
                         </p>
 
                         <p className="mt-4 text-sm">
@@ -86,7 +86,7 @@ function Login () {
                                 </div>
 
                                 <p className="text-center text-xs">
-                                <Link to="/cadastro" className="font-semibold">
+                                <Link to="/forgotpassword" className="font-semibold">
                                 Esqueci minha senha
                                 </Link>
                                 </p>
