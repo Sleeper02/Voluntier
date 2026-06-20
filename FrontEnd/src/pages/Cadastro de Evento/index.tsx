@@ -1,7 +1,7 @@
 import MainNavBar from "../../components/mainnavbar";
 import Footer from "../../components/footer"
 import { Link } from "react-router-dom";
-import wallpapercadastroevento from "../../assets/wallpaperCadastroEvento.png"
+import wallpapercadastroevento from "../../assets/wallpaperCadastroEvento.jpg"
 
 
 

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function MainNavBar() {
+function NavBar() {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -9,12 +9,16 @@ function MainNavBar() {
     logout();
     navigate("/login");
   }
+
   return (
     <nav className="relative bg-[#FFFAF2] h-[80px] flex items-center border-t-[12px] border-[#C96A3D] px-8">
       {/* Logo esquerda */}
-      <a className="text-2xl font-bold text-black" href="/home">
+      <Link
+        to="/home"
+        className="text-2xl font-bold text-black"
+      >
         Voluntier
-      </a>
+      </Link>
 
       {/* Menu central */}
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-6">
@@ -32,6 +36,7 @@ function MainNavBar() {
           Eventos
         </Link>
 
+        {/* VOLUNTÁRIO */}
         {usuario?.perfil === "VOLUNTARIO" && (
           <>
             <Link
@@ -47,9 +52,17 @@ function MainNavBar() {
             >
               Meus Eventos
             </Link>
+
+            <Link
+              to="/recompensas"
+              className="font-medium text-sm text-black hover:text-gray-800 transition-colors duration-300"
+            >
+              Recompensas
+            </Link>
           </>
         )}
 
+        {/* INSTITUIÇÃO */}
         {usuario?.perfil === "INSTITUICAO" && (
           <>
             <Link
@@ -60,7 +73,7 @@ function MainNavBar() {
             </Link>
 
             <Link
-              to="/cadastrarevento"
+              to="/cadastroevento"
               className="font-medium text-sm text-black hover:text-gray-800 transition-colors duration-300"
             >
               Criar Evento
@@ -69,8 +82,8 @@ function MainNavBar() {
         )}
       </div>
 
-      {/* Botões de Login e Cadastro */}
-      <div className="ml-auto flex items-center gap-2">
+      {/* Lado direito */}
+      <div className="ml-auto flex items-center gap-3">
         {!usuario ? (
           <>
             <Link
@@ -89,11 +102,13 @@ function MainNavBar() {
           </>
         ) : (
           <>
-            <span className="text-sm font-medium">Olá, {usuario.nome}</span>
+            <span className="text-sm font-medium text-black">
+              Olá, Usuário
+            </span>
 
             <button
               onClick={handleLogout}
-              className="rounded-full bg-[#C96A3D] px-6 py-2 text-base font-medium text-white"
+              className="rounded-full bg-[#C96A3D] px-6 py-2 text-base font-medium text-white hover:opacity-90 transition"
             >
               Sair
             </button>
@@ -104,4 +119,4 @@ function MainNavBar() {
   );
 }
 
-export default MainNavBar;
+export default NavBar;

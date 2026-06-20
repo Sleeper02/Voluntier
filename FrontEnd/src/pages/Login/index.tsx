@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import cadastroBg from "../../assets/cadastro-bg.png";
 import paint from "../../assets/paint.png";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const { login } = useAuth();
@@ -11,13 +10,12 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [perfil, setPerfil] = useState("VOLUNTARIO");
 
-  function isValidEmail(email) {
+  function isValidEmail(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!email || !senha) {
@@ -30,11 +28,23 @@ function Login() {
       return;
     }
 
-    login({
-      id: perfil === "VOLUNTARIO" ? 1 : 2,
-      nome: perfil === "VOLUNTARIO" ? "João" : "ONG Amigos",
-      perfil,
-    });
+    // MOCK TEMPORÁRIO
+  const perfil: "VOLUNTARIO" | "INSTITUICAO" =
+  email.includes("ong")
+    ? "INSTITUICAO"
+    : "VOLUNTARIO";
+
+  login({
+    id: "1",
+    nome:
+      perfil === "INSTITUICAO"
+        ? "ONG Amigos"
+        : "João",
+    perfil,
+    token: "token-mock",
+  });
+
+navigate("/home");
 
     navigate("/home");
   }
@@ -68,7 +78,9 @@ function Login() {
               para você.
             </p>
 
-            <p className="mt-4 text-sm">Sua próxima collab começa aqui :)</p>
+            <p className="mt-4 text-sm">
+              Sua próxima collab começa aqui :)
+            </p>
           </div>
         </div>
 
@@ -79,7 +91,9 @@ function Login() {
               Welcome back!
             </h1>
 
-            <p className="text-sm mb-4">Por favor preencha suas informações.</p>
+            <p className="text-sm mb-4">
+              Por favor preencha suas informações.
+            </p>
 
             <form className="space-y-3" onSubmit={handleSubmit}>
               {/* EMAIL */}
@@ -87,6 +101,7 @@ function Login() {
                 <label className="block text-xs font-semibold text-[#C46F3C] mb-1">
                   Email
                 </label>
+
                 <input
                   className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                   placeholder="Escreva seu email"
@@ -102,6 +117,7 @@ function Login() {
                 <label className="block text-xs font-semibold text-[#C46F3C] mb-1">
                   Senha
                 </label>
+
                 <input
                   className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                   placeholder="Digite sua senha"
@@ -116,42 +132,38 @@ function Login() {
               <div className="w-full justify-between flex">
                 <div className="flex items-start gap-2">
                   <input type="checkbox" className="mt-0.5 h-3 w-3" />
+
                   <p className="text-[10px] leading-4 text-[#5D524D]">
                     Lembrar de mim
                   </p>
                 </div>
 
-                <Link to="/forgotpassword" className="text-xs font-semibold">
+                <Link
+                  to="/forgotpassword"
+                  className="text-xs font-semibold"
+                >
                   Esqueci minha senha
                 </Link>
               </div>
 
-              {/* BOTÕES DE PERFIL */}
+              {/* BOTÃO ÚNICO */}
               <button
                 type="submit"
-                onClick={() => setPerfil("VOLUNTARIO")}
                 className="w-full rounded-md bg-[#c46f3c] py-2 text-sm font-semibold text-white"
               >
-                Entrar como Voluntário
-              </button>
-
-              <button
-                type="submit"
-                onClick={() => setPerfil("INSTITUICAO")}
-                className="w-full rounded-md bg-[#3E6F73] py-2 text-sm font-semibold text-white mt-2"
-              >
-                Entrar como Instituição
+                Entrar
               </button>
 
               <p className="mt-4 text-center text-xs">
                 Não tem uma conta?{" "}
                 <Link
-                  to="/cadastro"
+                  to="/acesso"
                   className="font-semibold transition-all duration-300 hover:opacity-70 hover:translate-x-1"
                 >
                   Cadastre-se
                 </Link>
               </p>
+              {/* para testar tem que usar ong no email */}
             </form>
           </div>
         </div>

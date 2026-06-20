@@ -8,9 +8,10 @@ import {
 type Perfil = "VOLUNTARIO" | "INSTITUICAO";
 
 interface Usuario {
-  id: number;
+  id: string;
   nome: string;
-  perfil: Perfil;
+  perfil: "VOLUNTARIO" | "INSTITUICAO";
+  token: string;
 }
 
 interface AuthContextType {
@@ -39,13 +40,13 @@ export function AuthProvider({
   }, []);
 
   function login(usuarioData: Usuario) {
-    localStorage.setItem(
-      "usuario",
-      JSON.stringify(usuarioData),
-    );
+  localStorage.setItem(
+    "usuario",
+    JSON.stringify(usuarioData),
+  );
 
-    setUsuario(usuarioData);
-  }
+  setUsuario(usuarioData);
+}
 
   function logout() {
     localStorage.removeItem("usuario");
