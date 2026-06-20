@@ -1,60 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/navbar";
 import ondasblue from "../../assets/ondasblue.png";
 import dogs from "../../assets/dogs.png";
 import Footer from "../../components/footer";
 import CardEvento from "../../components/cardevento";
+import { useAuth } from "../../context/AuthContext";
+import axiosInstance from "../../api/axiosInstance";
+
+interface ListagemEventoDTO {
+  id: string;
+  titulo: string;
+  descricao: string;
+  dataCriacao: string;
+  dataHora: string;
+  localizacao: string;
+  idInstituicao: string;
+}
 
 function EventosCriados() {
   const navigate = useNavigate();
+  const { usuario } = useAuth();
 
   const [abaAtiva, setAbaAtiva] = useState<"proximos" | "concluidos">(
     "proximos",
   );
+  const [eventos, setEventos] = useState<ListagemEventoDTO[]>([]);
 
-  const eventos = [
-    {
-      id: 1,
-      titulo: "Campanha de Vacinação",
-      descricao:
-        "Evento criado pela instituição para atendimento da população.",
-      tag: "Saúde",
-      endereco: "Av. Celestino Figueiredo, 2039",
-      cidade: "Presidente Prudente, SP",
-      dataEvento: "2026-06-01T14:30:00",
-      imagem: dogs,
-    },
-    {
-      id: 2,
-      titulo: "Mutirão Solidário",
-      descricao: "Evento concluído para arrecadação de alimentos.",
-      tag: "Social",
-      endereco: "Rua das Flores, 100",
-      cidade: "Presidente Prudente, SP",
-      dataEvento: "2026-01-01T09:00:00",
-      imagem: dogs,
-    },
-    {
-      id: 2,
-      titulo: "Mutirão Solidário",
-      descricao: "Evento concluído para arrecadação de alimentos.",
-      tag: "Social",
-      endereco: "Rua das Flores, 100",
-      cidade: "Presidente Prudente, SP",
-      dataEvento: "2026-07-07T09:00:00",
-      imagem: dogs,
-    },
-  ];
+  useEffect(() => {
+    if (!usuario?.id) return;
+
+    axiosInstance
+      .get<ListagemEventoDTO[]>(`/evento/instituicao/${usuario.id}`)
+      .then((res) => setEventos(res.data ?? []));
+  }, [usuario?.id]);
 
   const agora = new Date();
 
   const proximosEventos = eventos.filter(
-    (evento) => new Date(evento.dataEvento) > agora,
+    (evento) => new Date(evento.dataHora) > agora,
   );
 
   const eventosConcluidos = eventos.filter(
-    (evento) => new Date(evento.dataEvento) <= agora,
+    (evento) => new Date(evento.dataHora) <= agora,
   );
 
   return (
@@ -117,13 +105,16 @@ function EventosCriados() {
             proximosEventos.map((evento) => (
               <CardEvento
                 key={evento.id}
-                {...evento}
+                titulo={evento.titulo}
+                descricao={evento.descricao}
+                tag=""
+                endereco={evento.localizacao ?? ""}
+                cidade=""
+                dataEvento={evento.dataHora}
+                imagem={dogs}
                 acaoTexto="Ver Inscritos"
                 onAcao={() => {
-                  // futura tela de inscritos
-                  console.log("Ver inscritos", evento.id);
-
-                  // navigate(`/evento/${evento.id}/inscritos`);
+                  console.log("Ver inscritos do evento", evento.id);
                 }}
               />
             ))}
@@ -132,12 +123,30 @@ function EventosCriados() {
             eventosConcluidos.map((evento) => (
               <CardEvento
                 key={evento.id}
-                {...evento}
+                titulo={evento.titulo}
+                descricao={evento.descricao}
+                tag=""
+                endereco={evento.localizacao ?? ""}
+                cidade=""
+                dataEvento={evento.dataHora}
+                imagem={dogs}
                 concluido
                 acaoTexto="Ver Avaliações"
                 onAcao={() => navigate(`/evento/${evento.id}/avaliacaoresumo`)}
               />
             ))}
+
+          {abaAtiva === "proximos" && proximosEventos.length === 0 && (
+            <p className="text-[#666] text-center py-10">
+              Nenhum evento próximo.
+            </p>
+          )}
+
+          {abaAtiva === "concluidos" && eventosConcluidos.length === 0 && (
+            <p className="text-[#666] text-center py-10">
+              Nenhum evento concluído.
+            </p>
+          )}
         </div>
       </section>
 

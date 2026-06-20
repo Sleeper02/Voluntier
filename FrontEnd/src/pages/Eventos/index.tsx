@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "@/components/navbar";
 import kid from "../../assets/kid.png";
 import medico1 from "../../assets/medico1.png";
-import energisa from "../../assets/energisa.png";
-import cachorro from "../../assets/cachorro.png";
 import SearchBar from "../../components/searchbar";
 import GridEventos from "../../components/grideventos";
 import Footer from "../../components/footer";
 import EventoLegalBanner from "../../components/eventolegal";
+import { getEventoController } from "../../api/endpoints/evento-controller/evento-controller";
+import axiosInstance from "../../api/axiosInstance";
+
+const api = getEventoController(axiosInstance);
+
+interface ListagemEventoDTO {
+  id: string;
+  titulo: string;
+  descricao: string;
+  dataCriacao: string;
+  dataHora: string;
+  localizacao: string;
+  idInstituicao: string;
+}
 
 function Eventos() {
   const [selectedTag, setSelectedTag] = useState("");
+  const [eventos, setEventos] = useState<ListagemEventoDTO[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState(false);
 
   const tags = [
     { label: "Assistência Social", value: "ASSISTENCIA_SOCIAL" },
@@ -26,34 +41,24 @@ function Eventos() {
     { label: "Esporte", value: "ESPORTE" },
   ];
 
-  const eventos = [
-    {
-      id: 1,
-      nome: "Unimed - Pequenos Cuidados",
-      descricao: "Área da saúde, atendimento infantil.",
-      imagem: medico1,
-      tag: "SAUDE",
-    },
-    {
-      id: 2,
-      nome: "Energisa - Cidade Limpa",
-      descricao: "Limpeza e coleta de lixo na cidade.",
-      imagem: energisa,
-      tag: "MEIO_AMBIENTE",
-    },
-    {
-      id: 3,
-      nome: "Cobasi - Lar Pet Lar",
-      descricao: "Feira de adoção de animais.",
-      imagem: cachorro,
-      tag: "BEM_ESTAR",
-    },
-  ];
+  useEffect(() => {
+    setLoading(true);
+    setErro(false);
+    api
+      .listarEvento(selectedTag ? { tag: selectedTag } : {})
+      .then((res) => {
+        setEventos(res.data as unknown as ListagemEventoDTO[]);
+      })
+      .catch(() => setErro(true))
+      .finally(() => setLoading(false));
+  }, [selectedTag]);
 
-  const eventosFiltrados =
-    selectedTag === ""
-      ? eventos
-      : eventos.filter((evento) => evento.tag === selectedTag);
+  const eventosFormatados = eventos.map((e) => ({
+    id: e.id,
+    nome: e.titulo,
+    descricao: e.descricao,
+    imagem: medico1,
+  }));
 
   return (
     <main className="bg-[#FFFAF2] min-h-screen overflow-x-hidden">
@@ -123,27 +128,43 @@ function Eventos() {
           </div>
         )}
 
-        {selectedTag === "" ? (
+        {loading && (
+          <div className="text-center py-10">
+            <p className="text-[#C96A3D] font-medium">Carregando eventos...</p>
+          </div>
+        )}
+
+        {erro && (
+          <div className="text-center py-10">
+            <p className="text-red-500 font-medium">
+              Não foi possível carregar os eventos. Tente novamente mais tarde.
+            </p>
+          </div>
+        )}
+
+        {!loading && !erro && selectedTag === "" && (
           <>
             <h1 className="text-4xl font-bold text-left mx-10 my-4 text-[#C96A3D] mt-10">
               eventos mais acessados
             </h1>
 
-            <GridEventos eventos={eventos} />
+            <GridEventos eventos={eventosFormatados} />
 
             <h1 className="text-4xl font-bold text-left mx-10 my-4 text-[#C96A3D] mt-10">
               eventos para o próximo mês
             </h1>
 
-            <GridEventos eventos={eventos} />
+            <GridEventos eventos={eventosFormatados} />
 
             <h1 className="text-4xl font-bold text-left mx-10 my-4 text-[#C96A3D] mt-10">
               eventos hypadosss
             </h1>
 
-            <GridEventos eventos={eventos} />
+            <GridEventos eventos={eventosFormatados} />
           </>
-        ) : eventosFiltrados.length === 0 ? (
+        )}
+
+        {!loading && !erro && selectedTag !== "" && eventosFormatados.length === 0 && (
           <div className="text-center py-20">
             <h2 className="text-3xl font-bold text-[#C96A3D]">
               Nenhum evento encontrado
@@ -153,14 +174,16 @@ function Eventos() {
               Não encontramos eventos para a categoria selecionada.
             </p>
           </div>
-        ) : (
+        )}
+
+        {!loading && !erro && selectedTag !== "" && eventosFormatados.length > 0 && (
           <>
             <h1 className="text-4xl font-bold text-left my-8 px-10 text-[#C96A3D]">
               Resultados para{" "}
               {tags.find((tag) => tag.value === selectedTag)?.label}
             </h1>
 
-            <GridEventos eventos={eventosFiltrados} />
+            <GridEventos eventos={eventosFormatados} />
           </>
         )}
 

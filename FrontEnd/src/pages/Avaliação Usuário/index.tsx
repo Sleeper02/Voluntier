@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
 
@@ -10,17 +11,17 @@ import medico3 from "../../assets/medico3.png";
 
 import { MapPin, Calendar, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle2 } from "lucide-react";
 
-type TermoAvaliacao =
-  | "BEM_ORGANIZADO"
-  | "MAL_ORGANIZADO"
-  | "PONTUAL"
-  | "ATRASADO"
-  | "BOA_COMUNICACAO"
-  | "IMPACTO_POSITIVO"
-  | "ESTRUTURA_ADEQUADA";
+import { useAuth } from "../../context/AuthContext";
+import { getAvaliacaoController } from "../../api/endpoints/avaliacao-controller/avaliacao-controller";
+import axiosInstance from "../../api/axiosInstance";
+import type { CriarAvaliacaoDTOTermosAvaliacaoItem } from "../../api/model";
+
+const api = getAvaliacaoController(axiosInstance);
+
+type TermoAvaliacao = CriarAvaliacaoDTOTermosAvaliacaoItem;
 
 const TERMOS: {
   label: string;
@@ -57,15 +58,17 @@ const TERMOS: {
 ];
 
 function AvaliacaoEvento() {
+  const { id: idEvento } = useParams<{ id: string }>();
+  const { usuario } = useAuth();
+
   const [nota, setNota] = useState(0);
   const [hoverNota, setHoverNota] = useState(0);
 
   const [comentario, setComentario] = useState("");
 
-  const [termosSelecionados, setTermosSelecionados] = useState<
-    TermoAvaliacao[]
-  >([]);
+  const [termosSelecionados, setTermosSelecionados] = useState<TermoAvaliacao[]>([]);
   const [sucesso, setSucesso] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const toggleTermo = (termo: TermoAvaliacao) => {
     setTermosSelecionados((prev) =>
@@ -76,33 +79,30 @@ function AvaliacaoEvento() {
   };
 
   const handleSubmit = async () => {
-    const payload = {
-      termosAvaliacao: termosSelecionados,
-      avaliacao: nota,
-      comentario,
-    };
+    if (!usuario?.id || !idEvento) return;
 
-    console.log(payload);
+    setLoading(true);
+    try {
+      await api.avaliar(usuario.id, idEvento, {
+        termosAvaliacao: termosSelecionados,
+        avaliacao: nota,
+        comentario,
+      });
 
-    /**
-     * FUTURA INTEGRAÇÃO
-     *
-     * await api.post(
-     *   `/avaliacao/${idPessoa}/${idEvento}`,
-     *   payload
-     * );
-     */
+      setSucesso(true);
+      setNota(0);
+      setHoverNota(0);
+      setComentario("");
+      setTermosSelecionados([]);
 
-    setSucesso(true);
-
-    setNota(0);
-    setHoverNota(0);
-    setComentario("");
-    setTermosSelecionados([]);
-
-    setTimeout(() => {
-      setSucesso(false);
-    }, 4000);
+      setTimeout(() => {
+        setSucesso(false);
+      }, 4000);
+    } catch {
+      alert("Erro ao enviar avaliação. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -259,7 +259,7 @@ function AvaliacaoEvento() {
           <div className="flex justify-center mt-10">
             <Button
               onClick={handleSubmit}
-              disabled={nota === 0}
+              disabled={nota === 0 || loading}
               className="
                 bg-[#C96A3D]
                 hover:bg-[#B85F34]
@@ -271,7 +271,7 @@ function AvaliacaoEvento() {
                 disabled:opacity-50
               "
             >
-              Enviar avaliação
+              {loading ? "Enviando..." : "Enviar avaliação"}
             </Button>
           </div>
         </div>

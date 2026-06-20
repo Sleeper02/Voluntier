@@ -11,6 +11,11 @@ import medico3 from "../../assets/medico3.png";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../../context/AuthContext";
+import { getInscricaoController } from "../../api/endpoints/inscricao-controller/inscricao-controller";
+import axiosInstance from "../../api/axiosInstance";
+
+const api = getInscricaoController(axiosInstance);
 
 type ConflictType = "NONE" | "SAME_DAY" | "SAME_DAY_AND_TIME";
 
@@ -27,6 +32,8 @@ interface Evento {
 }
 
 function EventoDescricao() {
+  const { usuario } = useAuth();
+
   const [evento, setEvento] = useState<Evento>({
     id: 1,
     titulo: "Pequenos Cuidados",
@@ -37,28 +44,33 @@ function EventoDescricao() {
     conflictType: "NONE",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubscription = async () => {
-    const mockResponse = {
-      success: true,
-      conflictType: "NONE" as ConflictType,
-    };
-
-    setEvento((prev) => ({
-      ...prev,
-      conflictType: mockResponse.conflictType,
-    }));
-
-    if (
-      mockResponse.conflictType === "SAME_DAY_AND_TIME" ||
-      evento.status === "CANCELADO"
-    ) {
+    if (!usuario?.id) {
+      alert("Faça login para se inscrever");
       return;
     }
 
-    setEvento((prev) => ({
-      ...prev,
-      inscrito: !prev.inscrito,
-    }));
+    setLoading(true);
+    try {
+      if (evento.inscrito) {
+        await api.cancelarInscricao(usuario.id, String(evento.id));
+        setEvento((prev) => ({ ...prev, inscrito: false, conflictType: "NONE" }));
+      } else {
+        await api.inscrever(usuario.id, String(evento.id));
+        setEvento((prev) => ({ ...prev, inscrito: true }));
+      }
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 409) {
+        setEvento((prev) => ({ ...prev, conflictType: "SAME_DAY_AND_TIME" }));
+      } else {
+        alert("Erro ao processar inscrição. Tente novamente.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,7 +84,6 @@ function EventoDescricao() {
           <h1 className="text-[45px] font-extrabold leading-[65px] text-[#2C2C2C]">
             {evento.titulo}
           </h1>
-
           <div className="flex items-center gap-8 mt-3 text-[15px] text-[#444444]">
             <div className="flex items-center gap-2">
               <MapPin size={18} />
@@ -191,6 +202,7 @@ function EventoDescricao() {
           <Button
             onClick={handleSubscription}
             disabled={
+              loading ||
               evento.conflictType === "SAME_DAY_AND_TIME" ||
               evento.status === "CANCELADO"
             }
@@ -211,9 +223,11 @@ function EventoDescricao() {
           >
             {evento.status === "CANCELADO"
               ? "Evento cancelado"
-              : evento.inscrito
-                ? "Cancelar inscrição"
-                : "Inscreva-se"}
+              : loading
+                ? "Processando..."
+                : evento.inscrito
+                  ? "Cancelar inscrição"
+                  : "Inscreva-se"}
           </Button>
         </div>
       </section>

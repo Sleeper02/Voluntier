@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 
 public class ListagemEventoDTO {
 
+    private String id;
     private String titulo;
     private String descricao;
     private LocalDateTime dataCriacao;
