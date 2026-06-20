@@ -1,11 +1,60 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import cadastroBg from "../../assets/cadastro-bg.png";
 import paint from "../../assets/paint.png";
+import { getPessoaController } from "../../api/endpoints/pessoa-controller/pessoa-controller";
+import axiosInstance from "../../api/axiosInstance";
+
+const api = getPessoaController(axiosInstance);
 
 function CadastroUsuario() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (senha !== confirmarSenha) {
+      alert("As senhas não coincidem");
+      return;
+    }
+
+    if (senha.length < 8) {
+      alert("A senha deve ter no mínimo 8 caracteres");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.cadastro({
+        nome,
+        dataNascimento,
+        telefone,
+        email,
+        senha,
+        cpf,
+      });
+      alert("Cadastro realizado com sucesso!");
+      navigate("/login");
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: string } })?.response?.data ??
+        "Erro ao realizar cadastro";
+      alert(msg);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <main
@@ -42,6 +91,8 @@ function CadastroUsuario() {
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                     placeholder="Digite seu nome e sobrenome"
                     type="text"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
                   />
                 </div>
                 <div>
@@ -53,6 +104,8 @@ function CadastroUsuario() {
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                     placeholder="Digite seu CPF"
                     type="text"
+                    value={cpf}
+                    onChange={(e) => setCpf(e.target.value)}
                   />
                 </div>
                 <div>
@@ -64,6 +117,8 @@ function CadastroUsuario() {
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                     placeholder="Digite seu telefone"
                     type="text"
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
                   />
                 </div>
 
@@ -75,6 +130,8 @@ function CadastroUsuario() {
                   <input
                     className="w-full rounded-md border border-[#8d7f75] text-[#8B95A7] bg-transparent px-3 py-1.5 text-sm outline-none"
                     type="date"
+                    value={dataNascimento}
+                    onChange={(e) => setDataNascimento(e.target.value)}
                   />
                 </div>
 
@@ -115,7 +172,7 @@ function CadastroUsuario() {
                 <p className="text-sm">Por favor preencha suas informações.</p>
               </div>
 
-              <form className="mt-4 space-y-3">
+              <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
                 <div>
                   <label className="block text-xs font-semibold text-[#C46F3C] mb-1">
                     Email
@@ -125,6 +182,8 @@ function CadastroUsuario() {
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                     placeholder="Escreva seu email"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
@@ -137,6 +196,8 @@ function CadastroUsuario() {
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                     placeholder="Digite sua senha"
                     type="password"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
                   />
                 </div>
 
@@ -149,14 +210,17 @@ function CadastroUsuario() {
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
                     placeholder="Confirme sua senha"
                     type="password"
+                    value={confirmarSenha}
+                    onChange={(e) => setConfirmarSenha(e.target.value)}
                   />
                 </div>
 
                 <button
-                  className="w-full rounded-md bg-[#c46f3c] py-2 text-sm font-semibold text-white transition-all duration-300 hover:opacity-90"
+                  className="w-full rounded-md bg-[#c46f3c] py-2 text-sm font-semibold text-white transition-all duration-300 hover:opacity-90 disabled:opacity-60"
                   type="submit"
+                  disabled={loading}
                 >
-                  Sign up
+                  {loading ? "Cadastrando..." : "Sign up"}
                 </button>
 
                 <button

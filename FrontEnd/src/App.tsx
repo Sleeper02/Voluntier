@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CadastroUsuario from "./pages/Cadastro Usuário";
 import Login from "./pages/Login";
 import EventoDescricao from "./pages/Descrição do Evento";
@@ -22,7 +22,9 @@ import EventosCriados from "./pages/Meus eventos criados";
 import PrivateRoute from "./components/privateroute";
 
 function App() {
+  const queryClient = new QueryClient();
   return (
+    <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Routes>
         {/* Públicas */}
@@ -112,6 +114,7 @@ function App() {
         />
       </Routes>
     </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

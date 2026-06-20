@@ -1,52 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/navbar";
 import ondasblue from "../../assets/ondasblue.png";
 import dogs from "../../assets/dogs.png";
 import Footer from "../../components/footer";
 import CardEvento from "../../components/cardevento";
+import { useAuth } from "../../context/AuthContext";
+import axiosInstance from "../../api/axiosInstance";
+
+interface ListagemEventoDTO {
+  id: string;
+  titulo: string;
+  descricao: string;
+  dataCriacao: string;
+  dataHora: string;
+  localizacao: string;
+  idInstituicao: string;
+}
+
+interface EventosVoluntarioDTO {
+  inscricoes: ListagemEventoDTO[];
+  participacoes: ListagemEventoDTO[];
+}
 
 function VisualizacaoEventosInscritos() {
   const navigate = useNavigate();
+  const { usuario } = useAuth();
 
   const [abaAtiva, setAbaAtiva] = useState<"proximos" | "concluidos">(
     "proximos",
   );
+  const [inscricoes, setInscricoes] = useState<ListagemEventoDTO[]>([]);
+  const [participacoes, setParticipacoes] = useState<ListagemEventoDTO[]>([]);
 
-  const eventos = [
-    {
-      id: 1,
-      titulo: "Nome do Evento Sendo Promovido",
-      descricao:
-        "Aqui vai uma breve descrição do evento, das coisinhas e tal e tal.",
-      tag: "Tag do Evento",
-      endereco: "Av. Celestino Figueiredo, 2039",
-      cidade: "Presidente Prudente, SP",
-      dataEvento: "2026-06-01T14:30:00",
-      imagem: dogs,
-    },
-    {
-      id: 2,
-      titulo: "Evento Concluído",
-      descricao:
-        "Aqui vai uma breve descrição do evento, das coisinhas e tal e tal.",
-      tag: "Saúde",
-      endereco: "Av. Brasil, 100",
-      cidade: "Presidente Prudente, SP",
-      dataEvento: "2025-01-01T09:00:00",
-      imagem: dogs,
-    },
-  ];
+  useEffect(() => {
+    if (!usuario?.id) return;
 
-  const agora = new Date();
-
-  const proximosEventos = eventos.filter(
-    (evento) => new Date(evento.dataEvento) > agora,
-  );
-
-  const eventosConcluidos = eventos.filter(
-    (evento) => new Date(evento.dataEvento) <= agora,
-  );
+    axiosInstance
+      .get<EventosVoluntarioDTO>(`/evento/voluntario/${usuario.id}`)
+      .then((res) => {
+        setInscricoes(res.data.inscricoes ?? []);
+        setParticipacoes(res.data.participacoes ?? []);
+      });
+  }, [usuario?.id]);
 
   return (
     <main className="bg-[#FFFAF2] min-h-screen overflow-x-hidden">
@@ -105,20 +101,47 @@ function VisualizacaoEventosInscritos() {
 
         <div className="mx-10 mt-6 flex flex-col gap-6">
           {abaAtiva === "proximos" &&
-            proximosEventos.map((evento) => (
-              <CardEvento key={evento.id} {...evento} />
+            inscricoes.map((evento) => (
+              <CardEvento
+                key={evento.id}
+                titulo={evento.titulo}
+                descricao={evento.descricao}
+                tag=""
+                endereco={evento.localizacao ?? ""}
+                cidade=""
+                dataEvento={evento.dataHora}
+                imagem={dogs}
+              />
             ))}
 
           {abaAtiva === "concluidos" &&
-            eventosConcluidos.map((evento) => (
+            participacoes.map((evento) => (
               <CardEvento
                 key={evento.id}
-                {...evento}
+                titulo={evento.titulo}
+                descricao={evento.descricao}
+                tag=""
+                endereco={evento.localizacao ?? ""}
+                cidade=""
+                dataEvento={evento.dataHora}
+                imagem={dogs}
                 concluido
                 acaoTexto="Avaliar Evento"
                 onAcao={() => navigate(`/evento/${evento.id}/avaliacao`)}
               />
             ))}
+
+          {abaAtiva === "proximos" && inscricoes.length === 0 && (
+            <p className="text-[#666] text-center py-10">
+              Nenhum evento inscrito.
+            </p>
+          )}
+
+          {abaAtiva === "concluidos" && participacoes.length === 0 && (
+            <p className="text-[#666] text-center py-10">
+              Nenhum evento concluído.
+            </p>
+          )}
         </div>
       </section>
 

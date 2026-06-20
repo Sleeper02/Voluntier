@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import NavBar from "../../components/navbar";
 import Footer from "../../components/footer";
 import NuvemPalavras from "@/components/nuvempalavras";
@@ -9,6 +10,11 @@ import medico2 from "../../assets/medico2.png";
 import medico3 from "../../assets/medico3.png";
 
 import { MapPin, Calendar, Star } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { getAvaliacaoController } from "../../api/endpoints/avaliacao-controller/avaliacao-controller";
+import axiosInstance from "../../api/axiosInstance";
+
+const api = getAvaliacaoController(axiosInstance);
 
 interface ViewAvaliacaoDTO {
   idEvento: string;
@@ -25,71 +31,30 @@ interface DashboardAvaliacaoDTO {
 }
 
 function AvaliacaoInstituicao() {
+  const { id: idEvento } = useParams<{ id: string }>();
+  const { usuario } = useAuth();
+
   const [dashboard, setDashboard] = useState<DashboardAvaliacaoDTO | null>(
     null,
   );
 
-  const carregarDashboard = async () => {
-    const mockDashboard: DashboardAvaliacaoDTO = {
-      mediaAvaliacao: 4.7,
-
-      distribuicao: {
-        5: 82,
-        4: 28,
-        3: 12,
-        2: 4,
-        1: 1,
-      },
-
-      frequenciaTermos: {
-        BEM_ORGANIZADO: 45,
-        MAL_ORGANIZADO: 21,
-        PONTUAL: 39,
-        ATRASADO: 18,
-        BOA_COMUNICACAO: 31,
-        IMPACTO_POSITIVO: 26,
-        ESTRUTURA_ADEQUADA: 18,
-      },
-
-      avaliacoes: [
-        {
-          idEvento: "1",
-          avaliacao: 5,
-          comentario:
-            "Evento extremamente bem organizado e com ótima comunicação.",
-          termosAvaliacao: ["BEM_ORGANIZADO", "BOA_COMUNICACAO"],
-        },
-        {
-          idEvento: "1",
-          avaliacao: 4,
-          comentario: "Experiência muito positiva. Participaria novamente.",
-          termosAvaliacao: ["IMPACTO_POSITIVO"],
-        },
-        {
-          idEvento: "1",
-          avaliacao: 5,
-          comentario: "Equipe pontual e estrutura excelente.",
-          termosAvaliacao: ["PONTUAL", "ESTRUTURA_ADEQUADA"],
-        },
-      ],
-    };
-
-    setDashboard(mockDashboard);
-
-    /**
-     * FUTURA INTEGRAÇÃO
-     *
-     * const response = await api.get(
-     *   `/avaliacao/eventos/${idInstituicao}/${idEvento}`
-     * );
-     *
-     * setDashboard(response.data);
-     */
-  };
-
   useEffect(() => {
-    carregarDashboard();
-  }, []);
+    if (!usuario?.id || !idEvento) return;
+
+    api
+      .visualizarAvaliacoes(usuario.id, idEvento)
+      .then((res) => {
+        setDashboard(res.data as unknown as DashboardAvaliacaoDTO);
+      })
+      .catch(() => {
+        setDashboard({
+          mediaAvaliacao: 0,
+          distribuicao: {},
+          frequenciaTermos: {},
+          avaliacoes: [],
+        });
+      });
+  }, [usuario?.id, idEvento]);
 
   if (!dashboard) {
     return (
@@ -238,18 +203,24 @@ function AvaliacaoInstituicao() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm mt-8">
-            <h3 className="font-bold text-xl text-[#2C2C2C] mb-8 text-center">
-              Word Cloud dos termos mais citados
-            </h3>
+          {palavras.length > 0 && (
+            <div className="bg-white rounded-3xl p-8 shadow-sm mt-8">
+              <h3 className="font-bold text-xl text-[#2C2C2C] mb-8 text-center">
+                Word Cloud dos termos mais citados
+              </h3>
 
-            <NuvemPalavras palavras={palavras} />
-          </div>
+              <NuvemPalavras palavras={palavras} />
+            </div>
+          )}
 
           <div className="bg-white rounded-3xl p-8 shadow-sm mt-8">
             <h3 className="font-bold text-xl text-[#2C2C2C] mb-6">
               Comentários dos voluntários
             </h3>
+
+            {dashboard.avaliacoes.length === 0 && (
+              <p className="text-[#666]">Nenhum comentário ainda.</p>
+            )}
 
             <div className="space-y-5">
               {dashboard.avaliacoes.map((avaliacao, index) => (

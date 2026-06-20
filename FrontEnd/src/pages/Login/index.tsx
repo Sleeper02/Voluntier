@@ -3,6 +3,10 @@ import { useState } from "react";
 import cadastroBg from "../../assets/cadastro-bg.png";
 import paint from "../../assets/paint.png";
 import { useAuth } from "../../context/AuthContext";
+import { getPessoaController } from "../../api/endpoints/pessoa-controller/pessoa-controller";
+import axiosInstance from "../../api/axiosInstance";
+
+const api = getPessoaController(axiosInstance);
 
 function Login() {
   const { login } = useAuth();
@@ -10,12 +14,13 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function isValidEmail(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!email || !senha) {
@@ -28,25 +33,30 @@ function Login() {
       return;
     }
 
-    // MOCK TEMPORÁRIO
-  const perfil: "VOLUNTARIO" | "INSTITUICAO" =
-  email.includes("ong")
-    ? "INSTITUICAO"
-    : "VOLUNTARIO";
+    setLoading(true);
+    try {
+      await api.login({ email, senha });
 
-  login({
-    id: "1",
-    nome:
-      perfil === "INSTITUICAO"
-        ? "ONG Amigos"
-        : "João",
-    perfil,
-    token: "token-mock",
-  });
+      const rankingRes = await api.ranking();
+      const encontrado = rankingRes.data.find((u) => u.email === email);
 
-navigate("/home");
+      const perfil: "VOLUNTARIO" | "INSTITUICAO" = email.includes("ong")
+        ? "INSTITUICAO"
+        : "VOLUNTARIO";
 
-    navigate("/home");
+      login({
+        id: encontrado?.id ?? email,
+        nome: encontrado?.nome ?? email,
+        perfil,
+        token: "",
+      });
+
+      navigate("/home");
+    } catch {
+      alert("Email ou senha incorretos");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -149,9 +159,10 @@ navigate("/home");
               {/* BOTÃO ÚNICO */}
               <button
                 type="submit"
-                className="w-full rounded-md bg-[#c46f3c] py-2 text-sm font-semibold text-white"
+                disabled={loading}
+                className="w-full rounded-md bg-[#c46f3c] py-2 text-sm font-semibold text-white disabled:opacity-60"
               >
-                Entrar
+                {loading ? "Entrando..." : "Entrar"}
               </button>
 
               <p className="mt-4 text-center text-xs">
@@ -163,7 +174,6 @@ navigate("/home");
                   Cadastre-se
                 </Link>
               </p>
-              {/* para testar tem que usar ong no email */}
             </form>
           </div>
         </div>

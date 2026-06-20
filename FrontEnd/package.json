@@ -7,12 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:api": "orval"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
+    "@tanstack/react-query": "^5.101.0",
     "@visx/group": "^4.0.0",
     "@visx/wordcloud": "^4.0.0",
+    "axios": "^1.18.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "d3-cloud": "^1.2.9",
@@ -38,6 +41,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "orval": "^8.18.0",
     "postcss": "^8.5.13",
     "tailwindcss": "^3.4.19",
     "typescript": "^6.0.3",

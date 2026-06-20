@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import NavBar from "../../components/navbar";
 import FooterWhite from "../../components/footerwhite";
@@ -8,19 +8,40 @@ import RankingList from "../../components/rankinglist";
 import Pagination from "../../components/pagination";
 
 import rankingcapa from "../../assets/rankingcapa (2).png";
+import { getPessoaController } from "../../api/endpoints/pessoa-controller/pessoa-controller";
+import axiosInstance from "../../api/axiosInstance";
+import type { PessoaModel } from "../../api/model";
+
+const api = getPessoaController(axiosInstance);
+
+interface RankingUser {
+  id: number;
+  username: string;
+  position: number;
+  events: number;
+}
 
 function Ranking() {
-  const mockUsers = [
-    { id: 1, username: "@user1", position: 1, events: 21 },
-    { id: 2, username: "@user2", position: 2, events: 18 },
-    { id: 3, username: "@user3", position: 3, events: 15 },
-    { id: 4, username: "@user4", position: 4, events: 12 },
-    { id: 5, username: "@user5", position: 5, events: 10 },
-    { id: 6, username: "@user6", position: 6, events: 9 },
-    { id: 7, username: "@user7", position: 7, events: 8 },
-  ];
-
+  const [users, setUsers] = useState<RankingUser[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [erro, setErro] = useState(false);
+
+  useEffect(() => {
+    api
+      .ranking()
+      .then((res) => {
+        const mapped: RankingUser[] = res.data.map(
+          (pessoa: PessoaModel, index: number) => ({
+            id: index + 1,
+            username: `@${pessoa.nome}`,
+            position: index + 1,
+            events: pessoa.eventosParticipados?.length ?? 0,
+          }),
+        );
+        setUsers(mapped);
+      })
+      .catch(() => setErro(true));
+  }, []);
 
   const usersPerPage = 5;
 
@@ -28,9 +49,9 @@ function Ranking() {
 
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
 
-  const currentUsers = mockUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(mockUsers.length / usersPerPage);
+  const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden">
@@ -118,6 +139,11 @@ function Ranking() {
 
       {/* LISTA */}
       <section className="px-6 md:px-10 mt-8">
+        {erro && (
+          <p className="text-center text-red-500 py-10">
+            Não foi possível carregar o ranking. Tente novamente mais tarde.
+          </p>
+        )}
         <RankingList users={currentUsers} />
 
         <Pagination

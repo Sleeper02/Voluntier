@@ -20,6 +20,7 @@ import javax.swing.text.View;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -115,7 +116,7 @@ public class EventoService {
     }
 
     private ListagemEventoDTO toListagemDTO(EventoModel e) {
-        return new ListagemEventoDTO(e.getId(), e.getTitulo(), e.getDataHora(), e.getSolicitacao(), e.getIdInstituicao());
+        return new ListagemEventoDTO(e.getId(), e.getTitulo(), e.getDescricao(), e.getDataCriacao().atStartOfDay(), e.getDataHora(), e.getLocalizacao(), e.getIdInstituicao());
     }
 
     public List<ViewRecompensaDTO> recompensasEvento (String id){

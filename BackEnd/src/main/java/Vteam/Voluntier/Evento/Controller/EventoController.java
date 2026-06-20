@@ -1,6 +1,7 @@
 package Vteam.Voluntier.Evento.Controller;
 
 import Vteam.Voluntier.Evento.DTOS.CadastroEventoDTO;
+import Vteam.Voluntier.Evento.DTOS.EventosVoluntarioDTO;
 import Vteam.Voluntier.Evento.DTOS.ListagemEventoDTO;
 import Vteam.Voluntier.Evento.DTOS.ViewRecompensaDTO;
 import Vteam.Voluntier.Evento.EnumsEvento.AreaAtuacao;
@@ -48,6 +49,32 @@ public class EventoController {
     public ResponseEntity<List<ViewRecompensaDTO>> recompensasEvento(@PathVariable String id){
         List<ViewRecompensaDTO> list = service.recompensasEvento(id);
         return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @GetMapping("/voluntario/{idPessoa}")
+    public ResponseEntity<?> listarEventosVoluntario(
+            @PathVariable String idPessoa,
+            @RequestParam(defaultValue = "criacao") String ordenar) {
+        try {
+            EventosVoluntarioDTO eventos = service.listarEventosVoluntario(idPessoa, ordenar);
+            return ResponseEntity.ok(eventos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao listar eventos do voluntário: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/instituicao/{idInstituicao}")
+    public ResponseEntity<?> listarEventosInstituicao(
+            @PathVariable String idInstituicao,
+            @RequestParam(defaultValue = "asc") String ordenar) {
+        try {
+            List<ListagemEventoDTO> eventos = service.listarEventosInstituicao(idInstituicao, ordenar);
+            return ResponseEntity.ok(eventos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao listar eventos da instituição: " + e.getMessage());
+        }
     }
 
     @GetMapping("/listar") //evento/listar?ordenar=realizacao&tag=MEIO_AMBIENTE
