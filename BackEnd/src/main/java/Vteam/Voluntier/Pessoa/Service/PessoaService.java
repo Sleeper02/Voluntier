@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import Vteam.Voluntier.Pessoa.Enums.PerfilConta;
 
 @Service
 public class PessoaService {
@@ -78,9 +79,12 @@ public class PessoaService {
     }
 
     public List<PessoaModel> getRanking(){
-        finalizarEventosPassados();
-        return pessoaRepository.findAllByOrderByPontosDesc();
-    }
+    finalizarEventosPassados();
+
+    return pessoaRepository.findByPerfilOrderByPontosDesc(
+            PerfilConta.VOLUNTARIO
+    );
+}
 
     private void finalizarEventosPassados() {
         LocalDateTime agora = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));

@@ -91,7 +91,7 @@ function CadastroInstituicao() {
 
                   <input
                     className="w-full rounded-md border border-[#8d7f75] bg-transparent px-3 py-1.5 text-sm outline-none"
-                    placeholder="Digite seu nome e sobrenome"
+                    placeholder="Digite o nome da sua instituição"
                     type="text"
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
