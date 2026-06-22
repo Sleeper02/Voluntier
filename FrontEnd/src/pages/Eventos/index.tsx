@@ -8,6 +8,7 @@ import Footer from "../../components/footer";
 import EventoLegalBanner from "../../components/eventolegal";
 import { getEventoController } from "../../api/endpoints/evento-controller/evento-controller";
 import axiosInstance from "../../api/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const api = getEventoController(axiosInstance);
 
@@ -19,10 +20,13 @@ interface ListagemEventoDTO {
   dataHora: string;
   localizacao: string;
   idInstituicao: string;
+  fotos?: string[];
 }
 
 function Eventos() {
+  const { usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState("");
+  const [busca, setBusca] = useState("");
   const [eventos, setEventos] = useState<ListagemEventoDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(false);
@@ -53,11 +57,17 @@ function Eventos() {
       .finally(() => setLoading(false));
   }, [selectedTag]);
 
-  const eventosFormatados = eventos.map((e) => ({
+  const eventosFiltrados = eventos.filter((e) =>
+    busca.trim() === "" ||
+    e.titulo?.toLowerCase().includes(busca.toLowerCase()) ||
+    e.descricao?.toLowerCase().includes(busca.toLowerCase())
+  );
+
+  const eventosFormatados = eventosFiltrados.map((e) => ({
     id: e.id,
     nome: e.titulo,
     descricao: e.descricao,
-    imagem: medico1,
+    imagem: e.fotos?.[0] ?? medico1,
   }));
 
   return (
@@ -85,7 +95,12 @@ function Eventos() {
         </div>
 
         <div className="flex justify-center mt-6">
-          <SearchBar placeholder="Busque a categoria" width="50%" />
+          <SearchBar
+            placeholder="Busque por nome ou descrição"
+            width="50%"
+            value={busca}
+            onChange={setBusca}
+          />
         </div>
 
         {/* TAGS */}
@@ -187,7 +202,7 @@ function Eventos() {
           </>
         )}
 
-        <EventoLegalBanner />
+        {usuario?.perfil !== "VOLUNTARIO" && <EventoLegalBanner />}
       </section>
 
       <Footer />

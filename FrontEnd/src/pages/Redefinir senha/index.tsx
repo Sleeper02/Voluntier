@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import cadastroBg from "../../assets/cadastro-bg.png";
 
 function RedefinirSenha() {
@@ -29,12 +30,7 @@ function RedefinirSenha() {
 
     setErro("");
 
-    // Aqui você fará a chamada da API futuramente
-    console.log("Senha alterada com sucesso!");
-
-    alert("Senha alterada com sucesso!");
-
-    // Limpa os campos
+    toast.success("Senha alterada com sucesso!");
     setNovaSenha("");
     setConfirmarSenha("");
 

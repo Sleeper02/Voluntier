@@ -16,6 +16,7 @@ interface ListagemEventoDTO {
   dataHora: string;
   localizacao: string;
   idInstituicao: string;
+  fotos?: string[];
 }
 
 function EventosCriados() {
@@ -111,11 +112,9 @@ function EventosCriados() {
                 endereco={evento.localizacao ?? ""}
                 cidade=""
                 dataEvento={evento.dataHora}
-                imagem={dogs}
+                imagem={evento.fotos?.[0] ?? dogs}
                 acaoTexto="Ver Inscritos"
-                onAcao={() => {
-                  console.log("Ver inscritos do evento", evento.id);
-                }}
+                onAcao={() => navigate(`/evento/${evento.id}/inscritos`)}
               />
             ))}
 
@@ -129,7 +128,7 @@ function EventosCriados() {
                 endereco={evento.localizacao ?? ""}
                 cidade=""
                 dataEvento={evento.dataHora}
-                imagem={dogs}
+                imagem={evento.fotos?.[0] ?? dogs}
                 concluido
                 acaoTexto="Ver Avaliações"
                 onAcao={() => navigate(`/evento/${evento.id}/avaliacaoresumo`)}

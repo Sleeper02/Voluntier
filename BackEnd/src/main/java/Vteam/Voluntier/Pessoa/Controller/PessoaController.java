@@ -60,4 +60,14 @@ public class PessoaController {
         ViewRecompensaPessoalDTO response = pessoaService.recompensaPessoa(id);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/resgatar/{idPessoa}/{idEvento}")
+    public ResponseEntity<String> resgatarRecompensa(@PathVariable String idPessoa, @PathVariable String idEvento){
+        try {
+            pessoaService.resgatarRecompensa(idPessoa, idEvento);
+            return ResponseEntity.ok("Recompensa resgatada com sucesso!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

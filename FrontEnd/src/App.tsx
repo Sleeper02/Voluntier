@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CadastroUsuario from "./pages/Cadastro Usuário";
 import Login from "./pages/Login";
@@ -18,6 +18,7 @@ import Acesso from "./pages/Papéis de acesso";
 import RedefinirSenha from "./pages/Redefinir senha";
 import CadastroInstituicao from "./pages/Cadastro Instituição";
 import EventosCriados from "./pages/Meus eventos criados";
+import InscritosEvento from "./pages/Inscritos Evento";
 
 import PrivateRoute from "./components/privateroute";
 
@@ -27,6 +28,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Routes>
+        {/* Rota raiz */}
+        <Route path="/" element={<Navigate to="/acesso" replace />} />
+
         {/* Públicas */}
         <Route path="/cadastro-instituicao" element={<CadastroInstituicao />} />
         <Route path="/cadastro-voluntario" element={<CadastroUsuario />} />
@@ -36,7 +40,7 @@ function App() {
         <Route path="/acesso" element={<Acesso />} />
         <Route path="/home" element={<Home />} />
         <Route path="/eventos" element={<Eventos />} />
-        <Route path="/eventodescricao" element={<EventoDescricao />} />
+        <Route path="/evento/:id/descricao" element={<EventoDescricao />} />
         <Route path="/ranking" element={<Ranking />} />
 
         {/* VOLUNTÁRIO */}
@@ -100,6 +104,15 @@ function App() {
           element={
             <PrivateRoute perfil="INSTITUICAO">
               <EventosCriados />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/evento/:id/inscritos"
+          element={
+            <PrivateRoute perfil="INSTITUICAO">
+              <InscritosEvento />
             </PrivateRoute>
           }
         />

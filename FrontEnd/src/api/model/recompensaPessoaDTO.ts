@@ -11,4 +11,5 @@ export interface RecompensaPessoaDTO {
   eventoNome?: string;
   recompensa?: string;
   tierNecessario?: RecompensaPessoaDTOTierNecessario;
+  imagem?: string;
 }

@@ -8,7 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
@@ -19,13 +20,15 @@ public class CadastroEventoDTO {
 
 
     private String titulo;
-    private LocalDate dataHora;
-    private String idInstituicao; //Verificar no service se existe
+    private LocalDateTime dataHora;
+    private String localizacao;
+    private String idInstituicao;
     private int lotacao;
     private String descricao;
     private EventoStatus solicitacao;
     private AreaAtuacao areaAtuacao;
     private TierEvento tier;
-    private String fotos;
+    private List<String> fotos;
     private Map<TierConta, String> recompensas;
+    private Map<TierConta, String> recompensasImagens;
 }

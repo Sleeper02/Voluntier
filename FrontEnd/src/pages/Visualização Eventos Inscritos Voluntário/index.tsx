@@ -16,6 +16,7 @@ interface ListagemEventoDTO {
   dataHora: string;
   localizacao: string;
   idInstituicao: string;
+  fotos?: string[];
 }
 
 interface EventosVoluntarioDTO {
@@ -43,6 +44,18 @@ function VisualizacaoEventosInscritos() {
         setParticipacoes(res.data.participacoes ?? []);
       });
   }, [usuario?.id]);
+
+  const agora = new Date();
+
+  const proximosEventos = inscricoes.filter(
+    (e) => new Date(e.dataHora) > agora
+  );
+
+  const concluidosInscritos = inscricoes.filter(
+    (e) => new Date(e.dataHora) <= agora
+  );
+
+  const todosConcluldos = [...participacoes, ...concluidosInscritos];
 
   return (
     <main className="bg-[#FFFAF2] min-h-screen overflow-x-hidden">
@@ -101,7 +114,7 @@ function VisualizacaoEventosInscritos() {
 
         <div className="mx-10 mt-6 flex flex-col gap-6">
           {abaAtiva === "proximos" &&
-            inscricoes.map((evento) => (
+            proximosEventos.map((evento) => (
               <CardEvento
                 key={evento.id}
                 titulo={evento.titulo}
@@ -110,12 +123,12 @@ function VisualizacaoEventosInscritos() {
                 endereco={evento.localizacao ?? ""}
                 cidade=""
                 dataEvento={evento.dataHora}
-                imagem={dogs}
+                imagem={evento.fotos?.[0] ?? dogs}
               />
             ))}
 
           {abaAtiva === "concluidos" &&
-            participacoes.map((evento) => (
+            todosConcluldos.map((evento) => (
               <CardEvento
                 key={evento.id}
                 titulo={evento.titulo}
@@ -124,20 +137,20 @@ function VisualizacaoEventosInscritos() {
                 endereco={evento.localizacao ?? ""}
                 cidade=""
                 dataEvento={evento.dataHora}
-                imagem={dogs}
+                imagem={evento.fotos?.[0] ?? dogs}
                 concluido
                 acaoTexto="Avaliar Evento"
                 onAcao={() => navigate(`/evento/${evento.id}/avaliacao`)}
               />
             ))}
 
-          {abaAtiva === "proximos" && inscricoes.length === 0 && (
+          {abaAtiva === "proximos" && proximosEventos.length === 0 && (
             <p className="text-[#666] text-center py-10">
               Nenhum evento inscrito.
             </p>
           )}
 
-          {abaAtiva === "concluidos" && participacoes.length === 0 && (
+          {abaAtiva === "concluidos" && todosConcluldos.length === 0 && (
             <p className="text-[#666] text-center py-10">
               Nenhum evento concluído.
             </p>

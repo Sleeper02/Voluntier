@@ -74,6 +74,12 @@ public class EventoModel {
     @Field("Recompensas")
     private Map<TierConta, String> recompensas = defaultRecompensas();
 
+    @Field("RecompensasImagens")
+    private Map<TierConta, String> recompensasImagens = new EnumMap<>(TierConta.class);
+
+    @Field("Bloqueados")
+    private List<String> bloqueados = new ArrayList<>();
+
     public static Map<TierConta, String> defaultRecompensas() {
         Map<TierConta, String> map = new EnumMap<>(TierConta.class);
         for (TierConta tier : TierConta.values()) {

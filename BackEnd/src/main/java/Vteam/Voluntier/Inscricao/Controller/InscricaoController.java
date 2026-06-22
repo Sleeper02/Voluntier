@@ -33,5 +33,23 @@ public class InscricaoController {
         }
     }
 
+    @GetMapping("/evento/{idEvento}")
+    public ResponseEntity<?> listarInscritos(@PathVariable String idEvento) {
+        try {
+            return ResponseEntity.ok(inscricaoService.listarInscritos(idEvento));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/bloquear/{idPessoa}/{idEvento}")
+    public ResponseEntity<String> bloquearInscrito(@PathVariable String idPessoa, @PathVariable String idEvento) {
+        try {
+            inscricaoService.bloquearInscrito(idPessoa, idEvento);
+            return ResponseEntity.ok("Voluntário bloqueado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
 }

@@ -51,6 +51,16 @@ public class EventoController {
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarEvento(@PathVariable String id) {
+        try {
+            ListagemEventoDTO evento = service.buscarPorId(id);
+            return ResponseEntity.ok(evento);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/voluntario/{idPessoa}")
     public ResponseEntity<?> listarEventosVoluntario(
             @PathVariable String idPessoa,
