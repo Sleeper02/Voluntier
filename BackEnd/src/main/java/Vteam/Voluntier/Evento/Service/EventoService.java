@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.text.View;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -49,8 +50,12 @@ public class EventoService {
             EventoModel evento = mapper.map(cadastroEvento, EventoModel.class);
             evento.setId(null);
             evento.setDataCriacao(LocalDate.now(ZoneId.of("America/Sao_Paulo")));
+            evento.setSolicitacao(EventoStatus.APROVADO);
             if (evento.getRecompensas() == null) {
                 evento.setRecompensas(EventoModel.defaultRecompensas());
+            }
+            if (cadastroEvento.getRecompensasImagens() != null) {
+                evento.setRecompensasImagens(cadastroEvento.getRecompensasImagens());
             }
             repository.save(evento);
 
@@ -80,6 +85,12 @@ public class EventoService {
 
     }
 
+    public ListagemEventoDTO buscarPorId(String id) {
+        EventoModel evento = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
+        return toListagemDTO(evento);
+    }
+
     public List<ListagemEventoDTO> listarEventosInstituicao(String idInstituicao, String ordem) {
         List<EventoModel> eventos = "desc".equalsIgnoreCase(ordem)
                 ? repository.findAllByIdInstituicaoOrderByDataHoraDesc(idInstituicao)
@@ -88,35 +99,48 @@ public class EventoService {
     }
 
     public EventosVoluntarioDTO listarEventosVoluntario(String idPessoa, String ordem) {
-        PessoaModel pessoa = pessoaService.buscarPorId(idPessoa);
+        LocalDateTime agora = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
-        Set<String> participadosSet = new HashSet<>(pessoa.getEventosParticipados());
+        Comparator<EventoModel> comparator = "desc".equalsIgnoreCase(ordem)
+                ? Comparator.comparing(EventoModel::getDataHora).reversed()
+                : Comparator.comparing(EventoModel::getDataHora);
 
-        Comparator<ListagemEventoDTO> comparator = "desc".equalsIgnoreCase(ordem)
-                ? Comparator.comparing(ListagemEventoDTO::getDataHora).reversed()
-                : Comparator.comparing(ListagemEventoDTO::getDataHora);
-
-        List<String> idsInscritos = inscricaoRepository.findAllByIdPessoa(idPessoa).stream()
+        // ids inscritos iniciais (sem filtro de participados ainda)
+        List<String> todosInscritos = inscricaoRepository.findAllByIdPessoa(idPessoa).stream()
                 .filter(i -> i.getSolicitacao() != SolicitacaoEnum.CANCELADO)
                 .map(i -> i.getIdEvento())
+                .toList();
+
+        // auto-finaliza eventos passados que ainda estão APROVADOS
+        repository.findAllById(todosInscritos).stream()
+                .filter(e -> e.getDataHora() != null && e.getDataHora().isBefore(agora))
+                .filter(e -> e.getSolicitacao() == EventoStatus.APROVADO)
+                .forEach(e -> finalizarEvento(e.getId()));
+
+        // recarrega pessoa para capturar pontos e eventosParticipados atualizados
+        PessoaModel pessoaAtualizada = pessoaService.buscarPorId(idPessoa);
+        Set<String> participadosSet = new HashSet<>(pessoaAtualizada.getEventosParticipados());
+
+        List<String> idsFinal = todosInscritos.stream()
                 .filter(id -> !participadosSet.contains(id))
                 .toList();
 
-        List<ListagemEventoDTO> inscricoes = repository.findAllById(idsInscritos).stream()
-                .map(this::toListagemDTO)
+        List<ListagemEventoDTO> inscricoes = repository.findAllById(idsFinal).stream()
                 .sorted(comparator)
+                .map(this::toListagemDTO)
                 .toList();
 
         List<ListagemEventoDTO> participacoes = repository.findAllById(participadosSet).stream()
-                .map(this::toListagemDTO)
                 .sorted(comparator)
+                .map(this::toListagemDTO)
                 .toList();
 
         return new EventosVoluntarioDTO(inscricoes, participacoes);
     }
 
     private ListagemEventoDTO toListagemDTO(EventoModel e) {
-        return new ListagemEventoDTO(e.getId(), e.getTitulo(), e.getDescricao(), e.getDataCriacao().atStartOfDay(), e.getDataHora(), e.getLocalizacao(), e.getIdInstituicao());
+        LocalDateTime dataCriacao = e.getDataCriacao() != null ? e.getDataCriacao().atStartOfDay() : null;
+        return new ListagemEventoDTO(e.getId(), e.getTitulo(), e.getDescricao(), dataCriacao, e.getDataHora(), e.getLocalizacao(), e.getIdInstituicao(), e.getFotos());
     }
 
     public List<ViewRecompensaDTO> recompensasEvento (String id){
@@ -125,29 +149,38 @@ public class EventoService {
 
         return eventoInst.stream()
                 .flatMap(evento -> evento.getRecompensas().entrySet().stream()
-                        .map(entrada -> new ViewRecompensaDTO(
-                                evento.getTitulo(),
-                                evento.getId(),
-                                entrada.getValue(), // recompensa (descrição)
-                                entrada.getKey() // tierConta
-                        ))
+                        .filter(entrada -> entrada.getValue() != null && !entrada.getValue().equals("NULL") && !entrada.getValue().isBlank())
+                        .map(entrada -> {
+                            String imagem = evento.getRecompensasImagens() != null
+                                    ? evento.getRecompensasImagens().get(entrada.getKey())
+                                    : null;
+                            return new ViewRecompensaDTO(
+                                    evento.getTitulo(),
+                                    evento.getId(),
+                                    entrada.getValue(),
+                                    entrada.getKey(),
+                                    imagem
+                            );
+                        })
                 )
-                        .toList();
+                .toList();
     }
 
     public List<ListagemEventoDTO> listarEventos(String ordenar, AreaAtuacao tag){
         List<EventoModel> eventos = repository.findAll();
 
         Comparator<EventoModel> comparator = switch (ordenar){
-            case "realizacao" -> Comparator.comparing(EventoModel :: getDataHora);
-            default -> Comparator.comparing(EventoModel :: getDataCriacao);
+            case "realizacao" -> Comparator.comparing(EventoModel::getDataHora, Comparator.nullsLast(Comparator.naturalOrder()));
+            default -> Comparator.comparing(EventoModel::getDataCriacao, Comparator.nullsLast(Comparator.naturalOrder()));
         };
 
+        LocalDateTime agora = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
         return eventos.stream()
                 .filter(e -> e.getSolicitacao() == EventoStatus.APROVADO)
+                .filter(e -> e.getDataHora() != null && e.getDataHora().isAfter(agora))
                 .filter(e -> tag == null || e.getAreaAtuacao() == tag)
                 .sorted(comparator)
-                .map(e -> mapper.map(e, ListagemEventoDTO.class))
+                .map(this::toListagemDTO)
                 .toList();
     }
 }

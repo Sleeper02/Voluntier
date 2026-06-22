@@ -19,4 +19,5 @@ export interface CadastroDTO {
      */
   senha: string;
   cpf?: string;
+  perfil: 'VOLUNTARIO' | 'INSTITUICAO';
 }

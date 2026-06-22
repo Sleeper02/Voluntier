@@ -12,12 +12,14 @@ import type { CadastroEventoDTOTier } from './cadastroEventoDTOTier';
 export interface CadastroEventoDTO {
   titulo?: string;
   dataHora?: string;
+  localizacao?: string;
   idInstituicao?: string;
   lotacao?: number;
   descricao?: string;
   solicitacao?: CadastroEventoDTOSolicitacao;
   areaAtuacao?: CadastroEventoDTOAreaAtuacao;
   tier?: CadastroEventoDTOTier;
-  fotos?: string;
+  fotos?: string[];
   recompensas?: CadastroEventoDTORecompensas;
+  recompensasImagens?: { [key: string]: string };
 }

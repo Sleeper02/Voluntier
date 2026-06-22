@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import cadastroBg from "../../assets/cadastro-bg.png";
 import paint from "../../assets/paint.png";
@@ -25,12 +26,12 @@ function CadastroInstituicao() {
     e.preventDefault();
 
     if (senha !== confirmarSenha) {
-      alert("As senhas não coincidem");
+      toast.error("As senhas não coincidem");
       return;
     }
 
     if (senha.length < 8) {
-      alert("A senha deve ter no mínimo 8 caracteres");
+      toast.error("A senha deve ter no mínimo 8 caracteres");
       return;
     }
 
@@ -43,14 +44,15 @@ function CadastroInstituicao() {
         email,
         senha,
         cpf: cnpj,
+        perfil: "INSTITUICAO",
       });
-      alert("Cadastro realizado com sucesso!");
+      toast.success("Cadastro realizado com sucesso!");
       navigate("/login");
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: string } })?.response?.data ??
         "Erro ao realizar cadastro";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -84,7 +86,7 @@ function CadastroInstituicao() {
               <div className="mt-4 space-y-3">
                 <div>
                   <label className="block text-xs font-semibold text-[#C46F3C] mb-1">
-                    Nome Completo
+                    Nome da Instituição
                   </label>
 
                   <input

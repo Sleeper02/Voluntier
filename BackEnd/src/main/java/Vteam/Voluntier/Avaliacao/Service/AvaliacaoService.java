@@ -42,9 +42,13 @@ public class AvaliacaoService {
 
         PessoaModel pessoa = p.get();
 
-        if(pessoa.getEventosParticipados().stream().noneMatch(id -> id.equals(idEvento))){
-            throw new IllegalArgumentException("Voluntario não participou desse evento!");
+        boolean participou = pessoa.getEventosParticipados().stream().anyMatch(id -> id.equals(idEvento));
+        boolean inscrito = eventoRepository.findById(idEvento)
+                .map(e -> e.getInscritos().contains(idPessoa))
+                .orElse(false);
 
+        if (!participou && !inscrito) {
+            throw new IllegalArgumentException("Voluntario não está inscrito nesse evento!");
         }
         if(avaliacaorepository.existsByIdPessoaAndIdEvento(idPessoa, idEvento)){
             throw new IllegalArgumentException("Voluntario já avaliou esse evento");

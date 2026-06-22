@@ -73,10 +73,17 @@ function NavBar() {
             </Link>
 
             <Link
-              to="/cadastroevento"
+              to="/cadastrarevento"
               className="font-medium text-sm text-black hover:text-gray-800 transition-colors duration-300"
             >
               Criar Evento
+            </Link>
+
+            <Link
+              to="/recompensasinstitucional"
+              className="font-medium text-sm text-black hover:text-gray-800 transition-colors duration-300"
+            >
+              Recompensas
             </Link>
           </>
         )}
@@ -103,7 +110,7 @@ function NavBar() {
         ) : (
           <>
             <span className="text-sm font-medium text-black">
-              Olá, Usuário
+              Olá, {usuario.nome}
             </span>
 
             <button

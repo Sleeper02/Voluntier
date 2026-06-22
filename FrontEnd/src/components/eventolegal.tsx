@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import eventolegal from "../assets/eventolegal.png";
 
 function EventoLegalBanner() {
@@ -21,7 +22,7 @@ function EventoLegalBanner() {
             um futuro melhor.
           </p>
           <div className="flex justify-center mt-8">
-            <a href="/cadastroevento">
+            <Link to="/cadastrarevento">
               <button
                 className="
                 bg-[#5E6B3F]
@@ -37,7 +38,7 @@ function EventoLegalBanner() {
               >
                 quero participar!
               </button>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

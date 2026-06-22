@@ -1,16 +1,16 @@
-import { useState } from "react";
-
 interface SearchBarProps {
   placeholder?: string;
   width?: string;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
 function SearchBar({
   placeholder = "Buscar",
   width = "300px",
+  value = "",
+  onChange,
 }: SearchBarProps) {
-  const [value, setValue] = useState("");
-
   return (
     <div
       className="flex items-center bg-[#B5C4C6] rounded-full px-4 py-2"
@@ -20,7 +20,7 @@ function SearchBar({
         type="text"
         placeholder={placeholder}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange?.(e.target.value)}
         className="bg-transparent outline-none flex-1 text-sm font-medium text-gray-700 placeholder-gray-600"
       />
 

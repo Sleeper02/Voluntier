@@ -15,4 +15,5 @@ public class RecompensaPessoaDTO {
     private String eventoNome;
     private String recompensa;
     private TierConta tierNecessario;
+    private String imagem;
 }

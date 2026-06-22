@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 
@@ -5,6 +7,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 function GridEventos({ eventos }) {
+  const navigate = useNavigate();
+  const { usuario } = useAuth();
+
   return (
     <div className="w-[1024px] mx-auto mt-10 px-10">
       <Swiper
@@ -23,28 +28,29 @@ function GridEventos({ eventos }) {
                   alt={evento.nome}
                   className="w-full h-[190px] object-cover rounded-[18px]"
                 />
-                <a href="/eventodescricao">
-                <button
-                  className="
-                    absolute
-                    bottom-4
-                    left-1/2
-                    -translate-x-1/2
-                    bg-[#D98C63]
-                    text-white
-                    font-bold
-                    text-[16px]
-                    px-8
-                    py-2
-                    rounded-xl
-                    shadow-sm
-                    hover:opacity-90
-                    transition
-                  "
-                >
-                  Inscreva-se
-                </button>
-                </a>
+                {usuario?.perfil !== "INSTITUICAO" && (
+                  <button
+                    onClick={() => navigate(`/evento/${evento.id}/descricao`)}
+                    className="
+                      absolute
+                      bottom-4
+                      left-1/2
+                      -translate-x-1/2
+                      bg-[#D98C63]
+                      text-white
+                      font-bold
+                      text-[16px]
+                      px-8
+                      py-2
+                      rounded-xl
+                      shadow-sm
+                      hover:opacity-90
+                      transition
+                    "
+                  >
+                    Inscreva-se
+                  </button>
+                )}
               </div>
 
               <div className="mt-2">
@@ -52,7 +58,7 @@ function GridEventos({ eventos }) {
                   {evento.nome}
                 </h2>
 
-                <p className="text-center text-[15px] text-[#666666] mt-1">
+                <p className="text-center text-[15px] text-[#666666] mt-1 line-clamp-1">
                   {evento.descricao}
                 </p>
               </div>

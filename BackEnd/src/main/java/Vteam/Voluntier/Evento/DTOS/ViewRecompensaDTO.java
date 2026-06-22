@@ -15,4 +15,5 @@ public class ViewRecompensaDTO {
     private String eventoId;
     private String recompensa;
     private TierConta tierConta;
+    private String imagem;
 }

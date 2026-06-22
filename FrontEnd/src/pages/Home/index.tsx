@@ -1,7 +1,6 @@
+import { useEffect, useState } from "react";
 import MainNavBar from "../../components/mainnavbar";
 import medico1 from "../../assets/medico1.png";
-import energisa from "../../assets/energisa.png";
-import cachorro from "../../assets/cachorro.png";
 import GridEventos from "../../components/grideventos";
 import Footer from "../../components/footer";
 
@@ -11,31 +10,34 @@ import bannerhome from "../../assets/bannerhome.png";
 import ondaslaranjas from "../../assets/ondaslaranjas.png";
 import ondascoloridas from "../../assets/ondascoloridas.png";
 import { Search, UserPlus, HeartHandshake } from "lucide-react";
+import { getEventoController } from "../../api/endpoints/evento-controller/evento-controller";
+import axiosInstance from "../../api/axiosInstance";
+
+const api = getEventoController(axiosInstance);
+
+interface ListagemEventoDTO {
+  id: string;
+  titulo: string;
+  descricao: string;
+  fotos?: string[];
+}
 
 function Home() {
-  const eventos = [
-    {
-      id: 1,
-      nome: "Unimed - Pequenos Cuidados",
-      descricao: "Área da saúde, atendimento infantil.",
-      imagem: medico1,
-      tag: "SAUDE",
-    },
-    {
-      id: 2,
-      nome: "Energisa - Cidade Limpa",
-      descricao: "Limpeza e coleta de lixo na cidade.",
-      imagem: energisa,
-      tag: "MEIO_AMBIENTE",
-    },
-    {
-      id: 3,
-      nome: "Cobasi - Lar Pet Lar",
-      descricao: "Feira de adoção de animais.",
-      imagem: cachorro,
-      tag: "BEM_ESTAR",
-    },
-  ];
+  const [eventos, setEventos] = useState<{ id: string; nome: string; descricao: string; imagem: string }[]>([]);
+
+  useEffect(() => {
+    api.listarEvento({}).then((res) => {
+      const dados = res.data as unknown as ListagemEventoDTO[];
+      setEventos(
+        dados.map((e) => ({
+          id: e.id,
+          nome: e.titulo,
+          descricao: e.descricao,
+          imagem: e.fotos?.[0] ?? medico1,
+        }))
+      );
+    }).catch(() => {});
+  }, []);
 
   return (
     <main className="bg-[#FFFAF2] min-h-screen overflow-x-hidden">

@@ -1,7 +1,9 @@
 package Vteam.Voluntier.Pessoa.Model;
 
+import Vteam.Voluntier.Pessoa.Enums.PerfilConta;
 import Vteam.Voluntier.Pessoa.Enums.TierConta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +29,7 @@ import java.util.List;
 public class PessoaModel {
 
     @Id
+    @JsonProperty("id")
     private String ID;
 
     @NotBlank (message = "Nome de usuario não pode ser vazio")
@@ -55,16 +60,54 @@ public class PessoaModel {
 
     private TierConta tier;
 
+    private PerfilConta perfil;
+
     private int pontos;
 
     private List<String> eventosParticipados = new ArrayList<>(); // salva o ID do evento
 
+    @Field("RecompensasResgatadas")
+    private List<String> recompensasResgatadas = new ArrayList<>(); // IDs de eventos cuja recompensa foi resgatada
+
+    @Field("DataBronze")
+    private LocalDateTime dataBronze; // quando atingiu BRONZE
+
+    @Field("DataPrata")
+    private LocalDateTime dataPrata; // quando atingiu PRATA
+
+    @Field("DataOuro")
+    private LocalDateTime dataOuro; // quando atingiu OURO
+
+    @Field("DataDiamante")
+    private LocalDateTime dataDiamante; // quando atingiu DIAMANTE
+
     public void recalcularTiers() {
-        if (pontos >= 100) this.tier = TierConta.DIAMANTE;
-        else if (pontos >= 50) this.tier = TierConta.OURO;
-        else if (pontos >= 25) this.tier = TierConta.PRATA;
-        else if (pontos >= 10) this.tier = TierConta.BRONZE;
-        else this.tier = TierConta.NENHUM;
+        TierConta novoTier = TierConta.NENHUM;
+        LocalDateTime agora = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+
+        if (pontos >= 100) {
+            novoTier = TierConta.DIAMANTE;
+            if (tier != TierConta.DIAMANTE && dataDiamante == null) {
+                dataDiamante = agora;
+            }
+        } else if (pontos >= 50) {
+            novoTier = TierConta.OURO;
+            if (tier != TierConta.OURO && dataOuro == null) {
+                dataOuro = agora;
+            }
+        } else if (pontos >= 25) {
+            novoTier = TierConta.PRATA;
+            if (tier != TierConta.PRATA && dataPrata == null) {
+                dataPrata = agora;
+            }
+        } else if (pontos >= 10) {
+            novoTier = TierConta.BRONZE;
+            if (tier != TierConta.BRONZE && dataBronze == null) {
+                dataBronze = agora;
+            }
+        }
+
+        this.tier = novoTier;
     }
 
 }

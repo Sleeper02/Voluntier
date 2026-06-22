@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "sonner";
 import cadastroBg from "../../assets/cadastro-bg.png";
 import paint from "../../assets/paint.png";
 import { useAuth } from "../../context/AuthContext";
@@ -24,12 +25,12 @@ function Login() {
     e.preventDefault();
 
     if (!email || !senha) {
-      alert("Preencha email e senha");
+      toast.error("Preencha email e senha");
       return;
     }
 
     if (!isValidEmail(email)) {
-      alert("Digite um email válido");
+      toast.error("Digite um email válido");
       return;
     }
 
@@ -40,9 +41,9 @@ function Login() {
       const rankingRes = await api.ranking();
       const encontrado = rankingRes.data.find((u) => u.email === email);
 
-      const perfil: "VOLUNTARIO" | "INSTITUICAO" = email.includes("ong")
-        ? "INSTITUICAO"
-        : "VOLUNTARIO";
+      const perfilBanco = (encontrado as unknown as { perfil?: string })?.perfil;
+      const perfil: "VOLUNTARIO" | "INSTITUICAO" =
+        perfilBanco === "INSTITUICAO" ? "INSTITUICAO" : "VOLUNTARIO";
 
       login({
         id: encontrado?.id ?? email,
@@ -53,7 +54,7 @@ function Login() {
 
       navigate("/home");
     } catch {
-      alert("Email ou senha incorretos");
+      toast.error("Email ou senha incorretos");
     } finally {
       setLoading(false);
     }

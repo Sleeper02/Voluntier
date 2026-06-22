@@ -19,10 +19,12 @@ interface RankingUser {
   username: string;
   position: number;
   events: number;
+  pontos: number;
 }
 
 function Ranking() {
   const [users, setUsers] = useState<RankingUser[]>([]);
+  const [busca, setBusca] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [erro, setErro] = useState(false);
 
@@ -36,6 +38,7 @@ function Ranking() {
             username: `@${pessoa.nome}`,
             position: index + 1,
             events: pessoa.eventosParticipados?.length ?? 0,
+            pontos: pessoa.pontos ?? 0,
           }),
         );
         setUsers(mapped);
@@ -45,13 +48,14 @@ function Ranking() {
 
   const usersPerPage = 5;
 
+  const usersFiltrados = busca.trim()
+    ? users.filter((u) => u.username.toLowerCase().includes(busca.toLowerCase()))
+    : users;
+
   const indexOfLastUser = currentPage * usersPerPage;
-
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-
-  const totalPages = Math.ceil(users.length / usersPerPage);
+  const currentUsers = usersFiltrados.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(usersFiltrados.length / usersPerPage);
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden">
@@ -133,7 +137,11 @@ function Ranking() {
         </h1>
 
         <div className="w-full md:w-[320px]">
-          <SearchBar placeholder="Buscar usuário" />
+          <SearchBar
+            placeholder="@ buscar"
+            value={busca}
+            onChange={(v) => { setBusca(v); setCurrentPage(1); }}
+          />
         </div>
       </section>
 

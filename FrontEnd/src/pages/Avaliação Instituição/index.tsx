@@ -14,6 +14,13 @@ import { useAuth } from "../../context/AuthContext";
 import { getAvaliacaoController } from "../../api/endpoints/avaliacao-controller/avaliacao-controller";
 import axiosInstance from "../../api/axiosInstance";
 
+interface ListagemEventoDTO {
+  titulo: string;
+  dataHora: string;
+  localizacao: string;
+  fotos?: string[];
+}
+
 const api = getAvaliacaoController(axiosInstance);
 
 interface ViewAvaliacaoDTO {
@@ -34,9 +41,16 @@ function AvaliacaoInstituicao() {
   const { id: idEvento } = useParams<{ id: string }>();
   const { usuario } = useAuth();
 
-  const [dashboard, setDashboard] = useState<DashboardAvaliacaoDTO | null>(
-    null,
-  );
+  const [dashboard, setDashboard] = useState<DashboardAvaliacaoDTO | null>(null);
+  const [evento, setEvento] = useState<ListagemEventoDTO | null>(null);
+
+  useEffect(() => {
+    if (!idEvento) return;
+    axiosInstance
+      .get<ListagemEventoDTO>(`/evento/${idEvento}`)
+      .then((res) => setEvento(res.data))
+      .catch(() => {});
+  }, [idEvento]);
 
   useEffect(() => {
     if (!usuario?.id || !idEvento) return;
@@ -96,40 +110,52 @@ function AvaliacaoInstituicao() {
       <section className="relative z-10 px-20 py-10">
         <div>
           <h1 className="text-[45px] font-extrabold leading-[65px] text-[#2C2C2C]">
-            Pequenos Cuidados
+            {evento?.titulo ?? "Carregando..."}
           </h1>
 
           <div className="flex items-center gap-8 mt-3 text-[15px] text-[#444444]">
-            <div className="flex items-center gap-2">
-              <MapPin size={18} />
-              <span>Presidente Prudente - SP</span>
-            </div>
+            {evento?.localizacao && (
+              <div className="flex items-center gap-2">
+                <MapPin size={18} />
+                <span>{evento.localizacao}</span>
+              </div>
+            )}
 
-            <div className="flex items-center gap-2">
-              <Calendar size={18} />
-              <span>18/04 e 19/04</span>
-            </div>
+            {evento?.dataHora && (
+              <div className="flex items-center gap-2">
+                <Calendar size={18} />
+                <span>
+                  {new Date(evento.dataHora).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="mt-10 flex justify-center">
           <div className="flex gap-3 h-[400px]">
             <img
-              src={medico1}
-              alt="Voluntariado"
+              src={evento?.fotos?.[0] ?? medico1}
+              alt="Foto principal"
               className="w-[620px] h-full object-cover rounded-[20px]"
             />
 
             <div className="flex flex-col gap-3">
               <img
-                src={medico2}
-                alt="Crianças"
+                src={evento?.fotos?.[1] ?? medico2}
+                alt="Foto 2"
                 className="w-[260px] h-[194px] object-cover rounded-[20px]"
               />
 
               <img
-                src={medico3}
-                alt="Vacina"
+                src={evento?.fotos?.[2] ?? medico3}
+                alt="Foto 3"
                 className="w-[260px] h-[194px] object-cover rounded-[20px]"
               />
             </div>

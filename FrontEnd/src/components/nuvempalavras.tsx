@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Wordcloud } from "@visx/wordcloud";
 
 interface Palavra {
@@ -10,6 +11,14 @@ interface Props {
 }
 
 export default function NuvemPalavras({ palavras }: Props) {
+  const [fontsReady, setFontsReady] = useState(false);
+
+  useEffect(() => {
+    document.fonts.ready.then(() => setFontsReady(true));
+  }, []);
+
+  if (!fontsReady) return <div style={{ height: 350 }} />;
+
   return (
     <div className="flex justify-center w-full">
       <svg width={900} height={350}>

@@ -29,15 +29,14 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
-
-  useEffect(() => {
-    const usuarioSalvo = localStorage.getItem("usuario");
-
-    if (usuarioSalvo) {
-      setUsuario(JSON.parse(usuarioSalvo));
+  const [usuario, setUsuario] = useState<Usuario | null>(() => {
+    try {
+      const salvo = localStorage.getItem("usuario");
+      return salvo ? (JSON.parse(salvo) as Usuario) : null;
+    } catch {
+      return null;
     }
-  }, []);
+  });
 
   function login(usuarioData: Usuario) {
   localStorage.setItem(
